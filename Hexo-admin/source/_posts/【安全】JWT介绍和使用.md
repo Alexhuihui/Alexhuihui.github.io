@@ -127,7 +127,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxZGZlZThkOC05OGE1LTQzMTQtYjRhZS1
 
 Refresh Token的有效期一般会长达数月，当它失效后，用户必须重新登录。
 
-#### 4.Secret VS Private-Public Key
+#### 3.Secret VS Private-Public Key
 
 流行的 HS256 签名算法的缺点是在生成和验证的时候都需要访问密钥。对于单一程序而言，这不是一个问题，但如果你有一个由多个服务构建的分布式系统，彼此独立运行，你必须在两个糟糕的选择之间进行选择：
 
