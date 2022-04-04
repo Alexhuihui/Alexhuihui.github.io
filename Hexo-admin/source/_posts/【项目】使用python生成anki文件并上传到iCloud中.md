@@ -3,6 +3,7 @@ title: 【项目】使用python生成anki文件并上传到iCloud中
 date: 2022-03-11 16:45:55
 categories: 个人项目
 tags: [genanki, anki, pyicloud]
+top: true
 ---
 
 这周开始看 `java-design-partterns`的时候经常在例子中看到很多不认识的单词，就想着把每次遇到的不认识的单词记录下来发送到手机里，可以随时复习。经过调研，发现python都有现成的库可以使用，使用`genanki`生成anki文件，再使用`pyicloud`登录自己的icloud账号，上传文件到icloud drive中，最后你就能通过anki 备忘录之类的软件从icloud drive中导入你的文件了。
