@@ -15,6 +15,8 @@ tags: [Kubernetes, minikube]
 
 在linux上安装
 
+<!-- more --> 
+
 using **binary download**
 
 ```shell
