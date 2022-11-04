@@ -6,7 +6,7 @@
   <link href="https://alexhuihui.github.io/atom.xml" rel="self"/>
   
   <link href="https://alexhuihui.github.io/"/>
-  <updated>2022-10-28T05:06:14.876Z</updated>
+  <updated>2022-11-04T09:53:43.493Z</updated>
   <id>https://alexhuihui.github.io/</id>
   
   <author>
@@ -15,6 +15,54 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【Java】使用切面打印控制层出参入参</title>
+    <link href="https://alexhuihui.github.io/article/20221104.html"/>
+    <id>https://alexhuihui.github.io/article/20221104.html</id>
+    <published>2022-11-04T03:00:59.000Z</published>
+    <updated>2022-11-04T09:53:43.493Z</updated>
+    
+    <content type="html"><![CDATA[<p>打印出参入参</p><span id="more"></span> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># 切面</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;打印出参入参&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://alexhuihui.github.io/categories/Java/"/>
+    
+    
+    <category term="Java" scheme="https://alexhuihui.github.io/tags/Java/"/>
+    
+    <category term="Aop" scheme="https://alexhuihui.github.io/tags/Aop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>【GitHub】使用Maven发布Java包</title>
+    <link href="https://alexhuihui.github.io/article/20221103.html"/>
+    <id>https://alexhuihui.github.io/article/20221103.html</id>
+    <published>2022-11-03T09:08:03.000Z</published>
+    <updated>2022-11-04T09:53:58.317Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文介绍如何通过<code>GitHub</code>的<code>actions</code>在代码推送到仓库时，将<code>Java</code>包发布到<code>maven</code>仓库的过程。</p><span id="more"></span> ]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;本文介绍如何通过&lt;code&gt;GitHub&lt;/code&gt;的&lt;code&gt;actions&lt;/code&gt;在代码推送到仓库时，将&lt;code&gt;Java&lt;/code&gt;包发布到&lt;code&gt;maven&lt;/code&gt;仓库的过程。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="GitHub" scheme="https://alexhuihui.github.io/categories/GitHub/"/>
+    
+    
+    <category term="actions" scheme="https://alexhuihui.github.io/tags/actions/"/>
+    
+    <category term="maven" scheme="https://alexhuihui.github.io/tags/maven/"/>
+    
+    <category term="Java" scheme="https://alexhuihui.github.io/tags/Java/"/>
+    
+  </entry>
   
   <entry>
     <title>【项目】使用python做数据迁移</title>
@@ -444,57 +492,6 @@
     <category term="JWT" scheme="https://alexhuihui.github.io/tags/JWT/"/>
     
     <category term="签名" scheme="https://alexhuihui.github.io/tags/%E7%AD%BE%E5%90%8D/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【安全】JWT介绍和使用</title>
-    <link href="https://alexhuihui.github.io/article/20211224.html"/>
-    <id>https://alexhuihui.github.io/article/20211224.html</id>
-    <published>2021-12-24T03:11:49.000Z</published>
-    <updated>2022-10-28T02:51:03.982Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="Why-use-it"><a href="#Why-use-it" class="headerlink" title="Why use it?"></a>Why use it?</h3><blockquote><p>JWT可以存储用户基本信息，常用于微服务中对请求的鉴权。</p><p>JWT是无状态的，方便后端服务的水平扩展</p></blockquote><span id="more"></span> <h3 id="一、JWT的构成"><a href="#一、JWT的构成" class="headerlink" title="一、JWT的构成"></a>一、JWT的构成</h3><p>一共三部分，第一部分我们称它为头部（header),第二部分我们称其为载荷（payload)，第三部分是签名（signature).</p><h4 id="1-header"><a href="#1-header" class="headerlink" title="1.header"></a>1.header</h4><p>jwt的头部承载两部分信息：</p><ul><li>声明类型，这里是jwt</li><li>声明加密的算法 通常直接使用 HMAC SHA256</li></ul><p>完整的头部就像下面这样的JSON：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &#x27;typ&#x27;: &#x27;JWT&#x27;,</span><br><span class="line">  &#x27;alg&#x27;: &#x27;HS256&#x27;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>然后将头部进行base64编码，构成了第一部分.</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9</span><br></pre></td></tr></table></figure><h4 id="2-payload"><a href="#2-payload" class="headerlink" title="2.payload"></a>2.payload</h4><p>载荷就是存放有效信息的地方。这个名字像是特指飞机上承载的货品，这些有效信息包含三个部分</p><ul><li>标准中注册的声明</li><li>公共的声明</li><li>私有的声明</li></ul><p><strong>标准中注册的声明</strong> (建议但不强制使用) ：</p><ul><li><strong>iss</strong>: jwt签发者</li><li><strong>sub</strong>: jwt所面向的用户</li><li><strong>aud</strong>: 接收jwt的一方</li><li><strong>exp</strong>: jwt的过期时间，这个过期时间必须要大于签发时间</li><li><strong>nbf</strong>: 定义在什么时间之前，该jwt都是不可用的</li><li><strong>iat</strong>: jwt的签发时间</li><li><strong>jti</strong>: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击</li></ul><p><strong>公共的声明</strong> ：<br> 公共的声明可以添加任何的信息，一般添加用户的相关信息或其他业务需要的必要信息.但不建议添加敏感信息，因为该部分在客户端可解密。</p><p><strong>私有的声明</strong> ：<br> 私有声明是提供者和消费者所共同定义的声明，一般不建议存放敏感信息，因为base64只是进行编码，意味着该部分信息可以归类为明文信息。</p><p>定义一个payload:</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;sub&quot;</span>: <span class="string">&quot;1234567890&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;John Doe&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;admin&quot;</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>然后将其进行base64加密，得到JWT的第二部分。</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9</span><br></pre></td></tr></table></figure><h4 id="3-signature"><a href="#3-signature" class="headerlink" title="3.signature"></a>3.signature</h4><p>签名可以校验payload里面的信息是否被篡改，它由编码过后的header和payload采用header里声明的算法使用secret key进行加密。</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">signature = Crypto(secret, base64(header), base64(payload))</span><br></pre></td></tr></table></figure><p>下面是个签名示例</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jbcOUQ2bbiYlfVtprEkaT_S6Y6yQnBDOAKDHIHjvl7g</span><br></pre></td></tr></table></figure><p>如果你感兴趣，可以拷贝下面的JWT去<a href="https://jwt.io/">https://jwt.io</a>进行解密.</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxZGZlZThkOC05OGE1LTQzMTQtYjRhZS1mYjU1YzRiMTg4NDUiLCJlbWFpbCI6ImFyaWVsQGNvZGluZ2x5LmlvIiwibmFtZSI6IkFyaWVsIFdlaW5iZXJnZXIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTU5ODYwODg0OCwiZXhwIjoxNTk4NjA5MTQ4fQ.oa3ziIZAoVFdn<span class="number">-97</span>rweJAjjFn6a4ZSw7ogIHA74mGq0</span><br></pre></td></tr></table></figure><p>既然JWT不能对信息加密，那它是如何防止信息被篡改的呢？比如我把角色改为Admin。服务端对JWT进行校验的时候会 对header和payload再次使用secret key加密，和传进来的JWT第三部分进行比较，如果不匹配则JWT不合法。</p><h3 id="二、常见的误解、问题和技巧"><a href="#二、常见的误解、问题和技巧" class="headerlink" title="二、常见的误解、问题和技巧"></a>二、常见的误解、问题和技巧</h3><h4 id="1-短暂的有效期和主动失效"><a href="#1-短暂的有效期和主动失效" class="headerlink" title="1.短暂的有效期和主动失效"></a>1.短暂的有效期和主动失效</h4><p>有效期较短的token是被高度推荐的，一些服务的token过期时间为5分钟在发布它们之后。</p><p>在token过期之后，auth server将会颁发一个包含最新的身份信息的access token，这个过程被叫做 token refresh。举个例子，如果用户角色从 Admin 变更为 User，拥有较短的生命周期的token可以保证用户的token包含最近的用户角色.</p><p>综上所述，较短的有效期的token有以下两个好处:</p><ul><li>如果你的token被盗取，攻击者使用你的token的有效时间窗口将会很短</li><li>JWT是无状态的，服务端无法主动令其失效，因此，较短的生命周期可以让我们在用户权限和角色方面保证强大的一致性</li></ul><h4 id="2-Refresh-Token"><a href="#2-Refresh-Token" class="headerlink" title="2.Refresh Token"></a>2.Refresh Token</h4><p>接上文，Refresh Token在很多使用JWT的系统的是必须要用的。</p><p>它的使用很简单，在最初authentication success的时候，给用户颁发两个token</p><ul><li>Access Token : 每个请求必须携带的JSON Web Token ，包含用户声明的信息</li><li>Refresh Token : 这个特殊类型的token是被持久化保存在数据库中的，被Auth Server所持有。它经常不是JWT，而是一个独一无二的hash值。</li></ul><p>我们已经知道，Access Token会携带在每个请求中并会在某个时间节点失效。然后前端将会发送一个Refresh请求并携带 Refresh Token。Auth Server将会生成一个新的Access Token返回给用户，用户使用这个token直到它过期，然后再刷新一遍，Over and over。</p><p>Refresh Token的有效期一般会长达数月，当它失效后，用户必须重新登录。</p><h4 id="3-Secret-VS-Private-Public-Key"><a href="#3-Secret-VS-Private-Public-Key" class="headerlink" title="3.Secret VS Private-Public Key"></a>3.Secret VS Private-Public Key</h4><p>流行的 HS256 签名算法的缺点是在生成和验证的时候都需要访问密钥。对于单一程序而言，这不是一个问题，但如果你有一个由多个服务构建的分布式系统，彼此独立运行，你必须在两个糟糕的选择之间进行选择：</p><ul><li>你可以选择使用专用服务进行 token 的生成和验证。从客户端接收 token 的任何服务，都需要调用身份验证服务来验证 token。对于繁忙的系统来说，这会在身份验证服务上产生性能问题。</li><li>你可以为所有需要从客户端接收 token 的服务配置密钥，以便它们可以验证 token，无需调用身份验证服务。但是，在多个地方使用密钥会增加其受到攻击的风险，并且一旦受到攻击，攻击者就可以生成有效 token 并模拟系统中的任何用户。</li></ul><p>因此对于这些程序，最好将签名密钥安全存储在身份验证服务中，并且仅用于生成密钥，而其他所有服务无需访问密钥就可以验证这些 token。实际上，这可以通过公钥加密来实现。</p><p>公钥加密基于两个组件的加密密钥：一个公钥和一个私钥。在命名实现时，公钥组件可以自由共享。可以使用公钥加密来完成两个工作流程：</p><ul><li>消息加密：如果你想要向某人发送加密消息，我可以使用他的公钥来加密。加密的消息只能用他的私钥来解密。</li><li>消息签名：如果我想要签署一条消息它来自我，我可以使用自己的私钥来生成签名。任何对验证消息感兴趣的人，都可以使用我的公钥来确认签名是否有效。</li></ul><p>JWT 的签名算法实现了上面的第二种情况。使用服务器的私钥对 token 进行签名，然后任何使用服务器公钥的人都可以验证它们，任何想要拥有它的人都可以免费使用。举个例子来说下面，我使用 <code>RS256</code> 签名算法，它是 RSA-SHA256 的简写。</p><p>下一步是为程序生成公钥/私钥集 (通常称为 “秘钥对”)。生成 RSA 密钥有几种不同的方法，但我喜欢使用 openssh 中的 ssh-keygen 工具：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -b 4096</span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/home/miguel/.ssh/id_rsa): jwt-key</span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase):</span><br><span class="line">Enter same passphrase again:</span><br><span class="line">Your identification has been saved <span class="keyword">in</span> jwt-key.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> jwt-key.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:ZER3ddV4/smE0rnoNesS+IwCNSbwu5SThfiWWtLYRVM miguel@MS90J8G8WL</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string">+---[RSA 4096]----+</span></span><br><span class="line"><span class="string">|       .+E. ....=|</span></span><br><span class="line"><span class="string">|   .   + . .  ..o|</span></span><br><span class="line"><span class="string">|    + o +   . oo |</span></span><br><span class="line"><span class="string">|   . + O   . + ..|</span></span><br><span class="line"><span class="string">|    = @ S . o + o|</span></span><br><span class="line"><span class="string">|   o #   . o + o.|</span></span><br><span class="line"><span class="string">|    * +   = o o  |</span></span><br><span class="line"><span class="string">|   . . . . = .   |</span></span><br><span class="line"><span class="string">|        .   o.   |</span></span><br><span class="line"><span class="string">+----[SHA256]-----+</span></span><br></pre></td></tr></table></figure><p><code>ssh-keygen</code> 命令的 -t 选项定义了，我正在请求的秘钥对，-b 选项指定密钥大小为 4096 位，这被认为是一个非常安全的密钥长度。当你运行该命令时，系统提示你需要为秘钥对提供文件名，这里我在当前路径下使用 <code>jwt-key</code> 。然后，系统将提示你输入密码来保护密钥，密钥需要保留为空。</p><p>当运行完命令，你会在当前目录下获得两个文件，<code>jwt-key</code> 和 <code>jwt-key.pub</code>。前者是私钥，将用于生成 token 签名，因此你需要保存好它。特别是，你不应该将私钥提交到代码仓库，而应直接在服务器上安装 (如果你需要重建服务器，则应做好备份)。.pub 文件用于验证 token。由于此文件没有敏感信息，因此你可以在需要验证 token 的任何项目上随意添加该文件的副本。</p><p>使用此秘钥对生成 token 的过程与我之前的内容非常相似。我们先使用私钥创建一个新的 token:</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jwt</span><br><span class="line">private_key = <span class="built_in">open</span>(<span class="string">&#x27;jwt-key&#x27;</span>).read()</span><br><span class="line">token = jwt.encode(&#123;<span class="string">&#x27;user_id&#x27;</span>: <span class="number">123</span>&#125;, private_key, algorithm=<span class="string">&#x27;RS256&#x27;</span>).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(token)</span><br></pre></td></tr></table></figure><p>然后再使用公钥来验证：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jwt</span><br><span class="line">public_key = <span class="built_in">open</span>(<span class="string">&#x27;jwt-key.pub&#x27;</span>).read()</span><br><span class="line">token = <span class="string">&#x27;eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VyX2lkIjoxMjN9.HT1kBSdGFAznrhbs2hB6xjVDilMUmKA-_36n1pLLtFTKHoO1qmRkUcy9bJJwGuyfJ_dbzBMyBwpXMj-EXnKQQmKlXsiItxzLVIfC5qE97V6l6S0LzT9bzixvgolwi-qB9STp0bR_7suiXaON-EzBWFh0PzZi7l5Tg8iS_0_iSCQQlX5MSJW_-bHESTf3dfj5GGbsRBRsi1TRBzvxMUB6GhNsy6rdUhwoTkihk7pljISTYs6BtNoGRW9gVUzfA2es3zwBaynyyMeSocYet6WJri97p0eRnVGtHSWwAmnzZ-CX5-scO9uYmb1fT1EkhhjGhnMejee-kQkMktCTNlPsaUAJyayzdgEvQeo5M9ZrfjEnDjF7ntI03dck1t9Bgy-tV1LKH0FWNLq3dCJJrYdQx--A-I7zW1th0C4wNcDe_d_GaYopbtU-HPRG3Z1SPKFuX1m0uYhk9aySvkec66NBfvV2xEgo8lRZyNxntXkMdeJCEiLF1UhQvvSvmWaWC-0uRulYACn4H-tZiaK7zvpcPkrsfJ7iR_O1bxMPziKpsM4b7c7tmsEcOUZY-IHEI9ibd54_A1O72i08sCWKT5CXyG70MAPqyR0MFlcV7IuDtBW3LCqyvfsDVk4eIj8VcSU1OKQJ1Gl-CTOHEyN-ncV3NslVLaT9Q1C4E7uK2QpS8z0&#x27;</span></span><br><span class="line">payload = jwt.decode(token, public_key, algorithms=[<span class="string">&#x27;RS256&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(payload)</span><br></pre></td></tr></table></figure><p>如果你感兴趣可以使用我的公钥来验证：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public_key = <span class="string">&#x27;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDKQ43JBiv6FwtMpq6hStz59tSUo8mEU2SwQSg6mGmm4RBZ7uudRSnSwcvGSv45J1rKx1GUSuGYs/To4Ehsney1utN3jUY0XPhSUgxgCIFz66R9eAu92pykWBcSF96mj753LsyBStqq1nCu1D0dEJOBQnz9J2Zzs0N71ZabEvb6hXE8e119j2LFEUQWfM+3+AzrgsVXsTFE8y3LKeWohzQRAY3cAsdPPKI2ayHtlW6DoQ9LLqnsj4YkCe0hDIP/unTyx5OijbD6r8AeAyY4EGIL3c3jYhla6pclSqyLyq7kI0lUAQq4IXS4DYdqNHX01fI57tZeim0+nM3/9H1vJC2EPCDZDRdC2reJ4go/AssyQGamlmlu21Xt3n7rthYWg1u6Y/wpabDBEQcoXJPrBwyuGK8VRQrUU16GMahSiTpHxwvKHBMVyghLPaC8SBf9/edJDxBIq9s2wpnNBdD8TohqAXQILnJt5QBbiG2L/3uMqrEg+udWURBOcVok9TnS6RTtvezM1dSlcYoNMhGYNLMKgBByMOM/bMqJg8udqWqPW2/i/eCNPTLRPqZR7Kdo/GGcMY9pSsDvbzM/IHdeV1JhTyRcSi0xJDCs2M3hmWLg1rJNf7wQZKISIXefIItrABRoF1MuKOsk2CgPnZJgjVhzjzSP7EmyzRAv0E8gCeCtDQ== root@VM-20-3-centos&#x27;</span></span><br></pre></td></tr></table></figure><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>推荐大家采用 RS256 非对称加密算法来生成和验证JWT Token，token的有效期要短一点，并且要有Refresh Token机制。</p>]]></content>
-    
-    
-    <summary type="html">&lt;h3 id=&quot;Why-use-it&quot;&gt;&lt;a href=&quot;#Why-use-it&quot; class=&quot;headerlink&quot; title=&quot;Why use it?&quot;&gt;&lt;/a&gt;Why use it?&lt;/h3&gt;&lt;blockquote&gt;
-&lt;p&gt;JWT可以存储用户基本信息，常用于微服务中对请求的鉴权。&lt;/p&gt;
-&lt;p&gt;JWT是无状态的，方便后端服务的水平扩展&lt;/p&gt;
-&lt;/blockquote&gt;</summary>
-    
-    
-    
-    <category term="安全" scheme="https://alexhuihui.github.io/categories/%E5%AE%89%E5%85%A8/"/>
-    
-    
-    <category term="JWT" scheme="https://alexhuihui.github.io/tags/JWT/"/>
-    
-    <category term="签名" scheme="https://alexhuihui.github.io/tags/%E7%AD%BE%E5%90%8D/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【安全】基本加密解密算法介绍</title>
-    <link href="https://alexhuihui.github.io/article/20211223.html"/>
-    <id>https://alexhuihui.github.io/article/20211223.html</id>
-    <published>2021-12-23T03:28:18.000Z</published>
-    <updated>2022-10-28T02:51:03.983Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h3><h4 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1.介绍"></a>1.介绍</h4><span id="more"></span> <ul><li>加密和解密都是使用相同的秘钥</li><li>优点是加密效率高，缺点是保密性低</li></ul><h4 id="2-常见的对称加密算法"><a href="#2-常见的对称加密算法" class="headerlink" title="2.常见的对称加密算法"></a>2.常见的对称加密算法</h4><ul><li>DES算法(Data Encryption Standard)</li><li>AES算法(Advanced Encryption Standard)</li></ul><h4 id="3-使用场景"><a href="#3-使用场景" class="headerlink" title="3.使用场景"></a>3.使用场景</h4><ul><li>微服务中用作MySQL，Redis等服务器地址、端口、账户名、密码等配置的加密</li></ul><h3 id="非对称加密"><a href="#非对称加密" class="headerlink" title="非对称加密"></a>非对称加密</h3><h4 id="1-介绍-1"><a href="#1-介绍-1" class="headerlink" title="1.介绍"></a>1.介绍</h4><ul><li>有两把钥匙(密钥对)，公钥和私钥，公钥的话给别人，私钥自己保存</li><li>特点是加密速度慢些，但是安全系数很高</li><li>加密和解密的规则是：公钥加密只能私钥解密，私钥加密只能公钥解密</li></ul><h4 id="2-算法"><a href="#2-算法" class="headerlink" title="2. 算法"></a>2. 算法</h4><ul><li>RSA</li></ul><h4 id="3-使用场景-1"><a href="#3-使用场景-1" class="headerlink" title="3.使用场景"></a>3.使用场景</h4><ul><li>身份认证：一条加密信息若能用A 的公钥能解开，则该信息一定是用A 的私钥加密的，该能确定该用户是A</li><li>陌生人通信：A 和B 两个人互不认识，A把自己的公钥发给B，B也把自己的公钥发给A，则双方可以通过对方的公钥加密信息通信。C 虽然也能得到A、B 的公钥，但是他解不开密文。</li><li>支付宝支付加密</li></ul><h3 id="单向加密（MD5）"><a href="#单向加密（MD5）" class="headerlink" title="单向加密（MD5）"></a>单向加密（MD5）</h3><blockquote><p>单向加密算法在加密过程中不需要使用密钥，输入明文后由算法直接加密成密文，密文无法解密，只有重新输入密文，并经过同样的加密算法处理，得到形同的密文并被系统重新识别后，才能真正的解密，这种算法非常复杂，通常只在数据量有限的情形下使用，如广泛应用在计算机系统中的口令加密等。</p></blockquote><h3 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h3>]]></content>
-    
-    
-    <summary type="html">&lt;h3 id=&quot;对称加密&quot;&gt;&lt;a href=&quot;#对称加密&quot; class=&quot;headerlink&quot; title=&quot;对称加密&quot;&gt;&lt;/a&gt;对称加密&lt;/h3&gt;&lt;h4 id=&quot;1-介绍&quot;&gt;&lt;a href=&quot;#1-介绍&quot; class=&quot;headerlink&quot; title=&quot;1.介绍&quot;&gt;&lt;/a&gt;1.介绍&lt;/h4&gt;</summary>
-    
-    
-    
-    <category term="安全" scheme="https://alexhuihui.github.io/categories/%E5%AE%89%E5%85%A8/"/>
-    
-    
-    <category term="AES" scheme="https://alexhuihui.github.io/tags/AES/"/>
-    
-    <category term="RSA" scheme="https://alexhuihui.github.io/tags/RSA/"/>
-    
-    <category term="MD5" scheme="https://alexhuihui.github.io/tags/MD5/"/>
     
   </entry>
   
