@@ -140,8 +140,25 @@
     </div>
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h3 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h3><p>Go 值传递的机制让数组在各个函数间传递起来比较“笨重”，开销较大，且开销随数组长度的增加而增加。为了解决这个问题，Go 引入了切片这一不定长同构数据类型。</p>
+        <h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p>Go 的数组类型包含两个重要属性：元素的类型和数组长度（元素的个数）。这两个属性也直接构成了 Go 语言中数组类型变量的声明：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr [N]T</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> arr = [<span class="number">6</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>数组类型变量是一个整体，这就意味着一个数组变量表示的是整个数组。这点与 C 语言完全不同，在 C 语言中，数组变量可视为指向数组第一个元素的指针。这样一来，无论是参与迭代，还是作为实际参数传给一个函数 / 方法，Go 传递数组的方式都是纯粹的值拷贝，这会带来较大的内存拷贝开销。</p>
+<span id="more"></span> 
+
+<h3 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h3><p>切片的定义比数组少了一个长度的声明</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> nums = []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Go 值传递的机制让数组在各个函数间传递起来比较“笨重”，开销较大，且开销随数组长度的增加而增加。为了解决这个问题，Go 引入了切片这一不定长同构数据类型。</p>
 <p>slice可以看做数组的文件描述符。它由三部分组成：指向底层数组的指针、当前大小和总容量。它还可以进行动态扩容，但是要小心它的底层数组在扩容的时候是复制到新的数组中的。</p>
+<p>切片的内部结构</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">type</span> slice <span class="keyword">struct</span> &#123;</span><br><span class="line">    array unsafe.Pointer</span><br><span class="line">    <span class="built_in">len</span>   <span class="keyword">int</span></span><br><span class="line">    <span class="built_in">cap</span>   <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>array: 是指向底层数组的指针；</p>
+<p>len: 是切片的长度，即切片中当前元素的个数；</p>
+<p>cap: 是底层数组的长度，也是切片的最大容量，cap 值永远大于等于 len 值。</p>
 
         
             <div id="toc-article">
@@ -149,7 +166,7 @@
   <div class="widget-wrap" id="toc-wrap">
     <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
     <div class="widget">
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%87%E7%89%87"><span class="toc-text">切片</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E7%BB%84"><span class="toc-text">数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%87%E7%89%87"><span class="toc-text">切片</span></a></li></ol>
     </div>
   </div>
 
