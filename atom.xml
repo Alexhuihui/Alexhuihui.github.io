@@ -6,7 +6,7 @@
   <link href="https://alexhuihui.github.io/atom.xml" rel="self"/>
   
   <link href="https://alexhuihui.github.io/"/>
-  <updated>2023-03-06T05:35:26.378Z</updated>
+  <updated>2023-03-06T06:41:02.387Z</updated>
   <id>https://alexhuihui.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【Go语言学习】06-协程、延迟函数调用、以及恐慌和恢复</title>
+    <link href="https://alexhuihui.github.io/article/20230306.html"/>
+    <id>https://alexhuihui.github.io/article/20230306.html</id>
+    <published>2023-03-06T06:33:03.000Z</published>
+    <updated>2023-03-06T06:41:02.387Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h3><p>协程（coroutine）是一种轻量级线程，可以在一个线程中实现多个协程并发执行，而不是像传统的线程一样需要多个线程并发执行。在 Go 语言中，协程是通过关键字 <code>go</code> 来启动的。</p><p>例如，以下代码启动了一个协程，执行一个函数 <code>myFunc</code>：</p><span id="more"></span> <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> myFunc()</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>在上面的代码中，<code>myFunc</code> 函数会在一个新的协程中执行，而主线程会继续执行下一条语句，不会阻塞等待 <code>myFunc</code> 的执行完成。</p><h3 id="延迟函数调用"><a href="#延迟函数调用" class="headerlink" title="延迟函数调用"></a>延迟函数调用</h3><p>延迟函数调用（defer）是一种语言特性，它可以在函数执行结束后再执行一个函数。在 Go 语言中，延迟函数调用是通过关键字 <code>defer</code> 来实现的。</p><p>例如，以下代码中的函数 <code>myFunc</code> 中有一个延迟函数调用 <code>defer cleanup()</code>：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">myFunc</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">defer</span> cleanup()</span><br><span class="line">    <span class="comment">// do some work</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>在上面的代码中，当函数 <code>myFunc</code> 执行完毕后，会自动调用函数 <code>cleanup</code>。这种特性通常用于资源的清理工作，例如关闭文件、释放内存等。</p><h3 id="恐慌和恢复"><a href="#恐慌和恢复" class="headerlink" title="恐慌和恢复"></a>恐慌和恢复</h3><p>恐慌（panic）和恢复（recover）是 Go 语言中处理异常的机制。当程序出现严重错误时，例如空指针引用、数组越界等，Go 会自动抛出一个恐慌（panic），如果没有被处理，程序会中止执行。</p><p>恢复（recover）是一种处理恐慌的机制。在一个 <code>defer</code> 函数中使用 <code>recover</code> 函数可以捕获到恐慌，并进行处理，防止程序中止执行。</p><p>例如，以下代码中的函数 <code>myFunc</code> 中有一个恐慌的处理：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">myFunc</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> r := <span class="built_in">recover</span>(); r != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="comment">// handle the panic</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="comment">// do some work</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>在上面的代码中，当函数 <code>myFunc</code> 出现恐慌时，会执行 <code>defer</code> 中的函数，并且可以通过 <code>recover</code> 函数捕获到恐慌，并进行处理。</p><p>举例说明：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            <span class="keyword">if</span> r := <span class="built_in">recover</span>(); r != <span class="literal">nil</span> &#123;</span><br><span class="line">                fmt.Println(<span class="string">&quot;Recovered in f&quot;</span>, r)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;()</span><br><span class="line">        fmt.Println(<span class="string">&quot;start&quot;</span>)</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">&quot;something wrong&quot;</span>)</span><br><span class="line">    &#125;()</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>上面的代码中，我们启动了一个协程，在其中执行了一个函数，当函数执行到 <code>panic(&quot;something wrong&quot;)</code> 时，会触发恐慌，但是由于我们在 <code>defer</code> 中使用了 <code>recover</code> 函数捕获了恐慌，因此程序并不会中止执行。最终，程序输出了以下内容：</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span></span><br><span class="line">Recovered <span class="keyword">in</span> f something wrong</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;h3 id=&quot;协程&quot;&gt;&lt;a href=&quot;#协程&quot; class=&quot;headerlink&quot; title=&quot;协程&quot;&gt;&lt;/a&gt;协程&lt;/h3&gt;&lt;p&gt;协程（coroutine）是一种轻量级线程，可以在一个线程中实现多个协程并发执行，而不是像传统的线程一样需要多个线程并发执行。在 Go 语言中，协程是通过关键字 &lt;code&gt;go&lt;/code&gt; 来启动的。&lt;/p&gt;
+&lt;p&gt;例如，以下代码启动了一个协程，执行一个函数 &lt;code&gt;myFunc&lt;/code&gt;：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Go语言学习" scheme="https://alexhuihui.github.io/categories/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="Go" scheme="https://alexhuihui.github.io/tags/Go/"/>
+    
+  </entry>
   
   <entry>
     <title>【Go语言学习】05-表达式、语句和简单语句</title>
@@ -467,29 +489,6 @@
     
     
     <category term="ZooKeeper" scheme="https://alexhuihui.github.io/tags/ZooKeeper/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【spring-authorization-server】样例说明</title>
-    <link href="https://alexhuihui.github.io/article/20220223.html"/>
-    <id>https://alexhuihui.github.io/article/20220223.html</id>
-    <published>2022-02-23T07:21:05.000Z</published>
-    <updated>2022-10-28T02:51:03.982Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>前段时间spring-security团队推出了新的基于Oauth2.0的授权服务器实现，叫做spring-authorization-server，让我们来探究一下里面example。</p><span id="more"></span> <p>client : </p><p>客户端首先向授权服务器的授权节点（Authorization endpoint）发起授权请求，通过@RegisteredOAuth2AuthorizedClient(“messaging-client-authorization-code”)</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OAuth2AuthorizedClientArgumentResolver</span><br></pre></td></tr></table></figure><p>获取注解里面定义的 clientRegistrationId = messaging-client-authorization-code</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DefaultOAuth2AuthorizedClientManager</span><br></pre></td></tr></table></figure><p>在authorize()中去寻找OAuth2AuthorizedClient，发现没有之后再去寻找ClientRegistration，在InMemoryClientRegistrationRepository中可以找到clientRegistrationId对应的ClientRegistration。</p><p><img src="https://raw.githubusercontent.com/Alexhuihui/photo/main/20220223155142.png"></p><p>然后用这个clientRegistration构建OAuth2AuthorizationContext，再使用DelegatingOAuth2AuthorizedClientProvider去调用authorizedClientProviders中的authorize()</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AuthorizationCodeOAuth2AuthorizedClientProvider</span><br></pre></td></tr></table></figure><p>抛出ClientAuthorizationRequiredException被OAuth2AuthorizationRequestRedirectFilter捕获</p><p>然后返回一个重定向地址：<a href="http://auth-server:9000/oauth2/authorize?response_type=code&amp;client_id=messaging-client&amp;scope=message.read%20message.write&amp;state=NVdF9Kzi80STPhHHHs9BTv9oAJlODlzpFEFVtl_TI6g=&amp;redirect_uri=http://127.0.0.1:8080/authorized">http://auth-server:9000/oauth2/authorize?response_type=code&amp;client_id=messaging-client&amp;scope=message.read%20message.write&amp;state=NVdF9Kzi80STPhHHHs9BTv9oAJlODlzpFEFVtl_TI6g%3D&amp;redirect_uri=http://127.0.0.1:8080/authorized</a></p><p>auth-server:</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OAuth2AuthorizationEndpointFilter</span><br></pre></td></tr></table></figure><p>处理授权请求，发现没有认证，然后就会经过DelegatingAuthenticationEntryPoint选择对应的LoginUrlAuthenticationEntryPoint返回401状态码</p><p><img src="https://raw.githubusercontent.com/Alexhuihui/photo/main/20220224104403.png"></p>]]></content>
-    
-    
-    <summary type="html">&lt;h3 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;headerlink&quot; title=&quot;介绍&quot;&gt;&lt;/a&gt;介绍&lt;/h3&gt;&lt;p&gt;前段时间spring-security团队推出了新的基于Oauth2.0的授权服务器实现，叫做spring-authorization-server，让我们来探究一下里面example。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="spring-authorization-server" scheme="https://alexhuihui.github.io/categories/spring-authorization-server/"/>
-    
-    
-    <category term="oauth2" scheme="https://alexhuihui.github.io/tags/oauth2/"/>
-    
-    <category term="spring-authorization-server" scheme="https://alexhuihui.github.io/tags/spring-authorization-server/"/>
     
   </entry>
   
