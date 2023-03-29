@@ -6,7 +6,7 @@
   <link href="https://alexhuihui.github.io/atom.xml" rel="self"/>
   
   <link href="https://alexhuihui.github.io/"/>
-  <updated>2023-03-06T06:41:02.387Z</updated>
+  <updated>2023-03-29T01:10:29.205Z</updated>
   <id>https://alexhuihui.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【Redis】数据结构和对象</title>
+    <link href="https://alexhuihui.github.io/article/20230329.html"/>
+    <id>https://alexhuihui.github.io/article/20230329.html</id>
+    <published>2023-03-29T00:42:28.000Z</published>
+    <updated>2023-03-29T01:10:29.205Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="开篇"><a href="#开篇" class="headerlink" title="开篇"></a>开篇</h3><p>本文介绍<code>redis</code>中的数据结构和对象</p><span id="more"></span> <h3 id="简单动态字符串"><a href="#简单动态字符串" class="headerlink" title="简单动态字符串"></a>简单动态字符串</h3><p><code>Redis</code>没有使用C语言传统的字符串表示，而是自己构建了一种名为简单动态字符串的抽象类型，用在可以被修改的字符串值，比如包含字符串值的键值对。</p><h4 id="SDS的定义"><a href="#SDS的定义" class="headerlink" title="SDS的定义"></a>SDS的定义</h4><p>每个 sds.h/sdshdr结构表示一个 SDS值:</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line">    <span class="comment">// 记录已使用字节的数量</span></span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    <span class="comment">// 记录buf数组中未使用字节的数量</span></span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line">    <span class="comment">// 字节数组，用于保存字符串</span></span><br><span class="line">    chat buf[];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="SDS-与-C-字符串的区别"><a href="#SDS-与-C-字符串的区别" class="headerlink" title="SDS 与 C 字符串的区别"></a>SDS 与 C 字符串的区别</h4><p>根据传统，C语言使用长度为N+1的字符数组来表示长度为N的字符串，并且字符数组的最后一个元素总是空字符·\0’。C语言使用的这种简单的字符串表示方式，并不能满足Rdis对字符串在安全性、效率以及功能方面的要求。</p><ul><li>常数复杂度获取字符串长度</li><li>杜绝缓冲区溢出</li><li>减少修改字符串时带来的内存重分配次数</li><li>二进制安全</li><li>兼容部分C字符串函数</li></ul><h3 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h3><p>链表提供了高效的节点重排能力，以及顺序性的节点访问方式，并且可以通过增删节点来灵活地调整链表的长度。作为一种常用数据结构，链表内置在很多高级的编程语言里面，因为Rdis使用的C语言并没有内置这种数据结构，所以Redis构建了自己的链表实现。</p><p>使用场景：</p><ul><li>列表键</li><li>发布订阅</li><li>慢查询</li><li>监视器</li><li>服务端保存各个客户端的状态信息</li><li>使用链表来构建客户端输出缓冲区</li></ul><h4 id="链表和链表节点的实现"><a href="#链表和链表节点的实现" class="headerlink" title="链表和链表节点的实现"></a>链表和链表节点的实现</h4><p>每个链表节点使用一个 adlist.h/listNode结构来表示</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> &#123;</span></span><br><span class="line">    <span class="comment">// 前置节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="comment">// 后置节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="comment">// 节点的值</span></span><br><span class="line">    <span class="keyword">void</span> *value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>虽然仅仅使用多个listNode结构就可以组成链表，但使用adlist.h/list来持有链表的话，操作起来会更方便：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span> &#123;</span></span><br><span class="line">    <span class="comment">// 表头节点</span></span><br><span class="line">    listNode *head;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 表尾结点</span></span><br><span class="line">    listNode *tail;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 链表所包含的节点数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> len;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 节点值复制函数</span></span><br><span class="line">    <span class="keyword">void</span> *(*dup) (<span class="keyword">void</span> *ptr);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 节点值释放函数</span></span><br><span class="line">    <span class="keyword">void</span> *(*<span class="built_in">free</span>) (<span class="keyword">void</span> *ptr);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 节点值对比函数</span></span><br><span class="line">    <span class="keyword">int</span> (*match) (<span class="keyword">void</span> *ptr, <span class="keyword">void</span> *key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Redis的链表实现的特性可以总结如下：</p><ul><li>双端：链表节点带有prev和next指针，获取某个节点的前置节点和后置节点的复杂度都是O(1)</li><li>无环：表头节点的prev指针和表尾节点的next指针都指向NULL,对链表的访问以NULL为终点。</li><li>带表头指针和表尾指针：通过list结构的head指针和tail指针，程序获取链表的表头节点和表尾节点的复杂度为O(1)。</li><li>带链表长度计数器：程序使用1ist结构的1en属性来对1ist持有的链表节点进行计数，程序获取链表中节点数量的复杂度为O(1)。</li><li>多态：链表节点使用void*指针来保存节点值，并且可以通过ist结构的dup、free、match三个属性为节点值设置类型特定函数，所以链表可以用于保存各种不<br>同类型的值。</li></ul><h3 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h3><p>字典，又称为符号表（symbol table）关联数组(associative array)或映射（map),是一种用于保存键值对(key-value pair)的抽象数据结构。</p>]]></content>
+    
+    
+    <summary type="html">&lt;h3 id=&quot;开篇&quot;&gt;&lt;a href=&quot;#开篇&quot; class=&quot;headerlink&quot; title=&quot;开篇&quot;&gt;&lt;/a&gt;开篇&lt;/h3&gt;&lt;p&gt;本文介绍&lt;code&gt;redis&lt;/code&gt;中的数据结构和对象&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Redis" scheme="https://alexhuihui.github.io/categories/Redis/"/>
+    
+    
+    <category term="Redis" scheme="https://alexhuihui.github.io/tags/Redis/"/>
+    
+    <category term="数据结构" scheme="https://alexhuihui.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+    
+  </entry>
   
   <entry>
     <title>【Go语言学习】06-协程、延迟函数调用、以及恐慌和恢复</title>
@@ -468,27 +491,6 @@
     <category term="栈" scheme="https://alexhuihui.github.io/tags/%E6%A0%88/"/>
     
     <category term="队列" scheme="https://alexhuihui.github.io/tags/%E9%98%9F%E5%88%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【ZooKeeper】The ZooKeeper Data Model</title>
-    <link href="https://alexhuihui.github.io/article/20220225.html"/>
-    <id>https://alexhuihui.github.io/article/20220225.html</id>
-    <published>2022-02-25T08:54:06.000Z</published>
-    <updated>2022-10-28T02:51:03.981Z</updated>
-    
-    <content type="html"><![CDATA[<p>zookeeper拥有多层的命名空间，就像一个分布式文件系统。唯一的不同就是它的每个节点都可以包含数据，就像文件系统中允许一个文件可以作为目录。它没有相对路径。</p><span id="more"></span> <h3 id="ZNodes"><a href="#ZNodes" class="headerlink" title="ZNodes"></a>ZNodes</h3><p>zookeeper中每个节点都都被叫做znode。它包含了数据本身、数据变更的版本和访问控制(acl)的版本</p><h4 id="Watches"><a href="#Watches" class="headerlink" title="Watches"></a>Watches</h4><p>客户端可以在znodes上设置监控，当znode出发了监控，zookeeper就会向客户端发送一个通知，然后清除监控。</p><h4 id="Data-Access"><a href="#Data-Access" class="headerlink" title="Data Access"></a>Data Access</h4><p>数据在每个节点中的读写操作都是原子的，每个节点都有一个 Access Control List (ACL)来决定谁可以干什么。</p><h4 id="Ephemeral-Nodes"><a href="#Ephemeral-Nodes" class="headerlink" title="Ephemeral Nodes"></a>Ephemeral Nodes</h4><p>zookeeper可以创建临时性的节点，这些节点只有在session创建和结束期间才是活跃的，可以通过<strong>getEphemerals()</strong> 获取当前session创建的临时节点。</p><h4 id="Sequence-Nodes"><a href="#Sequence-Nodes" class="headerlink" title="Sequence Nodes"></a>Sequence Nodes</h4><p>有序的节点，拥有唯一的名字。</p><h4 id="Container-Nodes"><a href="#Container-Nodes" class="headerlink" title="Container Nodes"></a>Container Nodes</h4><p>容器节点是专门用来作为leader或者lock。当容器的最后一个节点被删除，容器就会被服务端在未来的某个时间删除。</p><h4 id="TTL-Nodes"><a href="#TTL-Nodes" class="headerlink" title="TTL Nodes"></a>TTL Nodes</h4><p>当创建永久或永久有序的节点，你可以选择设置过期时间。</p><hr><h3 id="Time-in-ZooKeeper"><a href="#Time-in-ZooKeeper" class="headerlink" title="Time in ZooKeeper"></a>Time in ZooKeeper</h3>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;zookeeper拥有多层的命名空间，就像一个分布式文件系统。唯一的不同就是它的每个节点都可以包含数据，就像文件系统中允许一个文件可以作为目录。它没有相对路径。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="ZooKeeper" scheme="https://alexhuihui.github.io/categories/ZooKeeper/"/>
-    
-    
-    <category term="ZooKeeper" scheme="https://alexhuihui.github.io/tags/ZooKeeper/"/>
     
   </entry>
   
