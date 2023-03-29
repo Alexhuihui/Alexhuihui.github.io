@@ -270,11 +270,11 @@
     <category term="GitHub" scheme="https://alexhuihui.github.io/categories/GitHub/"/>
     
     
-    <category term="Java" scheme="https://alexhuihui.github.io/tags/Java/"/>
-    
     <category term="actions" scheme="https://alexhuihui.github.io/tags/actions/"/>
     
     <category term="maven" scheme="https://alexhuihui.github.io/tags/maven/"/>
+    
+    <category term="Java" scheme="https://alexhuihui.github.io/tags/Java/"/>
     
   </entry>
   
