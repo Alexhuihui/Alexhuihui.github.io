@@ -6,7 +6,7 @@
   <link href="https://alexhuihui.github.io/atom.xml" rel="self"/>
   
   <link href="https://alexhuihui.github.io/"/>
-  <updated>2023-06-08T05:34:24.559Z</updated>
+  <updated>2023-06-08T05:37:53.642Z</updated>
   <id>https://alexhuihui.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【Mybatis】Mybatis源码解析—基础功能包</title>
+    <link href="https://alexhuihui.github.io/article/20230608.html"/>
+    <id>https://alexhuihui.github.io/article/20230608.html</id>
+    <published>2023-06-08T05:35:48.000Z</published>
+    <updated>2023-06-08T05:37:53.642Z</updated>
+    
+    <content type="html"><![CDATA[<p>阅读mybatis源码可以先从外围的基础功能包开始，剥洋葱一样一层一层深入</p><span id="more"></span> <h3 id="type-包"><a href="#type-包" class="headerlink" title="type 包"></a>type 包</h3>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;阅读mybatis源码可以先从外围的基础功能包开始，剥洋葱一样一层一层深入&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Mybatis" scheme="https://alexhuihui.github.io/categories/Mybatis/"/>
+    
+    
+    <category term="Mybatis" scheme="https://alexhuihui.github.io/tags/Mybatis/"/>
+    
+  </entry>
   
   <entry>
     <title>【Mybatis】Mybatis运行流程</title>
@@ -319,9 +340,9 @@
     
     <category term="ElasticSearch" scheme="https://alexhuihui.github.io/tags/ElasticSearch/"/>
     
-    <category term="docker" scheme="https://alexhuihui.github.io/tags/docker/"/>
-    
     <category term="linux" scheme="https://alexhuihui.github.io/tags/linux/"/>
+    
+    <category term="docker" scheme="https://alexhuihui.github.io/tags/docker/"/>
     
   </entry>
   
@@ -457,25 +478,6 @@
     <category term="Kubernetes" scheme="https://alexhuihui.github.io/tags/Kubernetes/"/>
     
     <category term="minikube" scheme="https://alexhuihui.github.io/tags/minikube/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【spring-authorization-server】基于spring-authorization-server实现Oauth2授权流程</title>
-    <link href="https://alexhuihui.github.io/article/20220410.html"/>
-    <id>https://alexhuihui.github.io/article/20220410.html</id>
-    <published>2022-04-10T09:31:06.000Z</published>
-    <updated>2022-10-28T02:51:03.982Z</updated>
-    
-    
-    
-    
-    <category term="spring-authorization-server" scheme="https://alexhuihui.github.io/categories/spring-authorization-server/"/>
-    
-    
-    <category term="oauth2" scheme="https://alexhuihui.github.io/tags/oauth2/"/>
-    
-    <category term="spring-authorization-server" scheme="https://alexhuihui.github.io/tags/spring-authorization-server/"/>
     
   </entry>
   
