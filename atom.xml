@@ -6,7 +6,7 @@
   <link href="https://alexhuihui.github.io/atom.xml" rel="self"/>
   
   <link href="https://alexhuihui.github.io/"/>
-  <updated>2023-10-19T08:15:22.578Z</updated>
+  <updated>2023-11-06T08:45:20.887Z</updated>
   <id>https://alexhuihui.github.io/</id>
   
   <author>
@@ -15,6 +15,23 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【RocketMq】部署&amp;运维</title>
+    <link href="https://alexhuihui.github.io/article/20231106.html"/>
+    <id>https://alexhuihui.github.io/article/20231106.html</id>
+    <published>2023-11-06T08:45:02.000Z</published>
+    <updated>2023-11-06T08:45:20.887Z</updated>
+    
+    
+    
+    
+    <category term="RocketMq" scheme="https://alexhuihui.github.io/categories/RocketMq/"/>
+    
+    
+    <category term="RocketMq" scheme="https://alexhuihui.github.io/tags/RocketMq/"/>
+    
+  </entry>
   
   <entry>
     <title>【技术分享】优化延迟队列任务消费时间的技术分享</title>
@@ -188,12 +205,12 @@
     <link href="https://alexhuihui.github.io/article/20230517.html"/>
     <id>https://alexhuihui.github.io/article/20230517.html</id>
     <published>2023-05-17T02:36:48.000Z</published>
-    <updated>2023-07-10T03:27:21.350Z</updated>
+    <updated>2023-11-10T03:39:05.528Z</updated>
     
-    <content type="html"><![CDATA[<p>AID -&gt; C</p><span id="more"></span><h3 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h3><p>原子性保证了事务的多个操作要么都生 效要么都不生效，不会存在中间状态</p>]]></content>
+    <content type="html"><![CDATA[<p>大家都知道数据库事务中有着<code>AICD</code>的说法，实际上C(一致性)是目的，而对应的A(原子性)、I(隔离性)、D(持久性)是手段，AID -&gt; C。</p><span id="more"></span><h3 id="概念介绍"><a href="#概念介绍" class="headerlink" title="概念介绍"></a>概念介绍</h3><h4 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h4><p>原子性保证了事务的多个操作要么都生效要么都不生效，不会存在中间状态</p><h4 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h4><p>在不同的业务处理过程中，互不影响各自读写数据</p><h3 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h3><p>所有提交成功的数据修改都应该被持久化保存</p><h3 id="实现原子性和持久性"><a href="#实现原子性和持久性" class="headerlink" title="实现原子性和持久性"></a>实现原子性和持久性</h3>]]></content>
     
     
-    <summary type="html">&lt;p&gt;AID -&amp;gt; C&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;大家都知道数据库事务中有着&lt;code&gt;AICD&lt;/code&gt;的说法，实际上C(一致性)是目的，而对应的A(原子性)、I(隔离性)、D(持久性)是手段，AID -&amp;gt; C。&lt;/p&gt;</summary>
     
     
     
@@ -464,25 +481,6 @@
     <category term="docker" scheme="https://alexhuihui.github.io/tags/docker/"/>
     
     <category term="linux" scheme="https://alexhuihui.github.io/tags/linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【系统设计】产品管理系统设计</title>
-    <link href="https://alexhuihui.github.io/article/20221202.html"/>
-    <id>https://alexhuihui.github.io/article/20221202.html</id>
-    <published>2022-12-02T02:26:02.000Z</published>
-    <updated>2022-12-02T03:02:43.650Z</updated>
-    
-    
-    
-    
-    <category term="系统设计" scheme="https://alexhuihui.github.io/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
-    
-    
-    <category term="系统设计" scheme="https://alexhuihui.github.io/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
-    
-    <category term="mysql" scheme="https://alexhuihui.github.io/tags/mysql/"/>
     
   </entry>
   
