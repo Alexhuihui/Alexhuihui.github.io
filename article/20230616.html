@@ -140,11 +140,37 @@
     </div>
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>我们通过示例代码来比对一下Go和 Java的并发编程</p>
+        <p>Go使用的是CSP并发模型，而JAVA使用的是基于传统的内存访问控制的并发模型。他们有以下区别。我们通过示例代码来比对一下Go和 Java的并发编程</p>
 <span id="more"></span>
 
-
-
+<p>“Communicating Sequential Processes” (CSP) 是一种并发计算的数学模型，最早由计算机科学家Tony Hoare于1978年提出。CSP 的主要目标是描述并发系统中进程之间的交互和通信方式，而不涉及共享内存的概念。与传统的内存访问控制有很大的区别，下面是一些主要的区别：</p>
+<ol>
+<li><p><strong>通信方式：</strong></p>
+<ul>
+<li><strong>CSP：</strong> 使用进程之间的明确通信来实现协同工作。进程通过发送和接收消息进行通信，但它们并不共享内存空间。</li>
+<li><strong>传统内存访问控制：</strong> 多个进程可能在同一块内存中进行读写操作，通过共享内存来实现通信。这可能导致诸如竞态条件和死锁等问题。</li>
+</ul>
+</li>
+<li><p><strong>并发模型：</strong></p>
+<ul>
+<li><strong>CSP：</strong> 采用事件驱动的方式，进程之间通过消息传递进行通信，以实现并发。并发在这里是通过协作和通信而非共享状态来实现的。</li>
+<li><strong>传统内存访问控制：</strong> 并发通常是通过多个进程或线程共享同一块内存来实现的。这可能引入一系列并发控制问题，如锁和同步。</li>
+</ul>
+</li>
+<li><p><strong>数据共享：</strong></p>
+<ul>
+<li><strong>CSP：</strong> 鼓励避免共享数据，而是通过消息传递来传递必要的信息。这样设计有助于减少竞态条件和提高系统的可靠性。</li>
+<li><strong>传统内存访问控制：</strong> 通常涉及多个进程或线程共享相同的内存区域，需要使用锁或其他同步机制来确保数据一致性。</li>
+</ul>
+</li>
+<li><p><strong>同步和互斥：</strong></p>
+<ul>
+<li><strong>CSP：</strong> 使用通信机制来进行同步，进程之间通过消息传递协调各自的动作。</li>
+<li><strong>传统内存访问控制：</strong> 常常需要使用锁或信号量等机制来进行同步和互斥，以防止多个进程同时访问共享的内存区域。</li>
+</ul>
+</li>
+</ol>
+<p>总的来说，CSP 提供了一种不同于传统共享内存的并发模型，强调通过明确的通信来实现进程之间的协同工作，以减少并发问题的出现。这种方式更容易推理和调试，并且有助于构建可靠的并发系统。</p>
 <h3 id="Go"><a href="#Go" class="headerlink" title="Go"></a>Go</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">type</span> Button <span class="keyword">struct</span> &#123;</span><br><span class="line">		Clicked *sync.Cond</span><br><span class="line">	&#125;</span><br><span class="line">	button := Button&#123;Clicked: sync.NewCond(&amp;sync.Mutex&#123;&#125;)&#125;</span><br><span class="line">	subscribe := <span class="function"><span class="keyword">func</span><span class="params">(c *sync.Cond, fn <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">		<span class="keyword">var</span> goroutineRunning sync.WaitGroup</span><br><span class="line">		goroutineRunning.Add(<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> c.L.Unlock()</span><br><span class="line">			goroutineRunning.Done()</span><br><span class="line">			c.L.Lock()</span><br><span class="line">			c.Wait()</span><br><span class="line">			fn()</span><br><span class="line">		&#125;()</span><br><span class="line">		goroutineRunning.Wait()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> clickRegistered sync.WaitGroup</span><br><span class="line">	clickRegistered.Add(<span class="number">3</span>)</span><br><span class="line">	subscribe(button.Clicked, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Maximizing window.&quot;</span>)</span><br><span class="line">		clickRegistered.Done()</span><br><span class="line">	&#125;)</span><br><span class="line">	subscribe(button.Clicked, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Displaying annoying dialog box!&quot;</span>)</span><br><span class="line">		clickRegistered.Done()</span><br><span class="line">	&#125;)</span><br><span class="line">	subscribe(button.Clicked, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Mouse clicked.&quot;</span>)</span><br><span class="line">		clickRegistered.Done()</span><br><span class="line">	&#125;)</span><br><span class="line">	button.Clicked.Broadcast()</span><br><span class="line">	clickRegistered.Wait()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
