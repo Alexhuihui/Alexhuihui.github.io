@@ -6,7 +6,7 @@
   <link href="https://alexhuihui.github.io/atom.xml" rel="self"/>
   
   <link href="https://alexhuihui.github.io/"/>
-  <updated>2024-01-24T09:43:05.624Z</updated>
+  <updated>2024-04-30T02:15:42.591Z</updated>
   <id>https://alexhuihui.github.io/</id>
   
   <author>
@@ -15,6 +15,55 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【Docker】容器的本质</title>
+    <link href="https://alexhuihui.github.io/article/20240430.html"/>
+    <id>https://alexhuihui.github.io/article/20240430.html</id>
+    <published>2024-04-30T01:57:57.000Z</published>
+    <updated>2024-04-30T02:15:42.591Z</updated>
+    
+    <content type="html"><![CDATA[<p>一个正在运行的 Docker 容器，其实就是一个启用了多个 Linux Namespace 的应用进程，而这个进程能够使用的资源量，则受 Cgroups 配置的限制。</p><p>下面通过一个小实验证明这句话</p><span id="more"></span> <h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>在 Linux 中，Cgroups 给用户暴露出来的操作接口是文件系统，即它以文件和目录的方式组织在操作系统的 /sys/fs/cgroup 路径下。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t cgroup </span><br></pre></td></tr></table></figure><p>进入到 /sys/fs/cgroup/cpu 目录下，并创建一个目录，操作系统会在新创建的 container 目录下，自动生成该子系统对应的资源限制文件。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/sys/fs/cgroup/cpu$ mkdir container</span><br><span class="line">root@ubuntu:/sys/fs/cgroup/cpu$ ls container/</span><br><span class="line">cgroup.clone_children cpu.cfs_period_us cpu.rt_period_us  cpu.shares notify_on_release</span><br><span class="line">cgroup.procs      cpu.cfs_quota_us  cpu.rt_runtime_us cpu.stat  tasks</span><br></pre></td></tr></table></figure><p>执行一个脚本，打满CPU</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">while : ; do : ; done &amp;</span><br></pre></td></tr></table></figure><p>修改container目录中的CPU资源限制并把刚刚创建的进程加入到任务组中</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo 20000 &gt; /sys/fs/cgroup/cpu/container/cpu.cfs_quota_us</span><br><span class="line"></span><br><span class="line">echo PID &gt; /sys/fs/cgroup/cpu/container/tasks </span><br></pre></td></tr></table></figure><p>这时候再通过TOP去查看CPU使用就会发现它的使用率从100%降到了20%</p><p><img src="https://raw.githubusercontent.com/Alexhuihui/photo/main/20240430101156.png"></p><h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><p>docker使用namespace进行隔离但是隔离的不彻底，它本质上还是一个跑在宿主机上的进程。</p><p>docker使用cgroups进行使用资源的限制，但是Cgroups 对资源的限制能力也有很多不完善的地方。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;一个正在运行的 Docker 容器，其实就是一个启用了多个 Linux Namespace 的应用进程，而这个进程能够使用的资源量，则受 Cgroups 配置的限制。&lt;/p&gt;
+&lt;p&gt;下面通过一个小实验证明这句话&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Docker" scheme="https://alexhuihui.github.io/categories/Docker/"/>
+    
+    
+    <category term="Docker" scheme="https://alexhuihui.github.io/tags/Docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>【事务处理】分布式事务</title>
+    <link href="https://alexhuihui.github.io/article/20240127.html"/>
+    <id>https://alexhuihui.github.io/article/20240127.html</id>
+    <published>2024-01-27T03:35:29.000Z</published>
+    <updated>2024-01-27T03:45:36.059Z</updated>
+    
+    <content type="html"><![CDATA[<p>可以按照服务的数量以及对应的数据源的使用数量来划分分布式事务，例如单个服务使用多数据源称作全局事务可以使用2、3段提交，多个服务使用单数据源则称作共享事务可以使用共享数据库连接，还有一种就是多服务多数据源，这种一般称作在分布式服务环境下的事务处理机制。</p><h3 id="全局事务"><a href="#全局事务" class="headerlink" title="全局事务"></a>全局事务</h3><blockquote><p> 准备阶段：又叫作投票阶段，在这一阶段，协调者询问事务的所有参与者是否准备好提交，参与者如果已经准备好提交则回复 Prepared，否则回复 Non-Prepared。这里所说的准备操作跟人类语言中通常理解的准备并不相同，对于数据库来说，准备操作是在重做日志中记录全部事务提交操作所要做的内容，它与本地事务中真正提交的区别只是暂不写入最后一条 Commit Record 而已，这意味着在做完数据持久化后并不立即释放隔离性，即仍继续持有锁，维持数据对其他非事务内观察者的隔离状态。</p><p>提交阶段：又叫作执行阶段，协调者如果在上一阶段收到所有事务参与者回复的 Prepared 消息，则先自己在本地持久化事务状态为 Commit，在此操作完成后向所有参与者发送 Commit 指令，所有参与者立即执行提交操作；否则，任意一个参与者回复了 Non-Prepared 消息，或任意一个参与者超时未回复，协调者将自己的事务状态持久化为 Abort 之后，向所有参与者发送 Abort 指令，参与者立即执行回滚操作。对于数据库来说，这个阶段的提交操作应是很轻量的，仅仅是持久化一条 Commit Record 而已，通常能够快速完成，只有收到 Abort 指令时，才需要根据回滚日志清理已提交的数据，这可能是相对重负载的操作。</p></blockquote><p>缺点很明显，容易单点、性能问题、一致性风险</p><h3 id="共享事务"><a href="#共享事务" class="headerlink" title="共享事务"></a>共享事务</h3><blockquote><p>理论可行，因为该方案是与实际生产系统中的压力方向相悖的，一个服务集群里数据库才是压力最大而又最不容易伸缩拓展的重灾区。</p></blockquote><h3 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h3>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;可以按照服务的数量以及对应的数据源的使用数量来划分分布式事务，例如单个服务使用多数据源称作全局事务可以使用2、3段提交，多个服务使用单数据源则称作共享事务可以使用共享数据库连接，还有一种就是多服务多数据源，这种一般称作在分布式服务环境下的事务处理机制。&lt;/p&gt;
+&lt;h3 id</summary>
+      
+    
+    
+    
+    <category term="事务处理" scheme="https://alexhuihui.github.io/categories/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/"/>
+    
+    
+    <category term="事务" scheme="https://alexhuihui.github.io/tags/%E4%BA%8B%E5%8A%A1/"/>
+    
+    <category term="分布式事务" scheme="https://alexhuihui.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"/>
+    
+  </entry>
   
   <entry>
     <title>【技术分享】Spring声明式事务的正确使用</title>
@@ -429,51 +478,6 @@
     
     
     <category term="Go" scheme="https://alexhuihui.github.io/tags/Go/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【Go语言学习】03-复合数据类型</title>
-    <link href="https://alexhuihui.github.io/article/20230304.html"/>
-    <id>https://alexhuihui.github.io/article/20230304.html</id>
-    <published>2023-03-04T02:45:11.000Z</published>
-    <updated>2023-03-04T03:03:15.358Z</updated>
-    
-    <content type="html"><![CDATA[<p>本文介绍go的另一个复合类型 map</p><h3 id="什么是map类型"><a href="#什么是map类型" class="headerlink" title="什么是map类型"></a>什么是map类型</h3><p>map 是 Go 语言提供的一种抽象数据类型，它表示一组无序的键值对。在后面的讲解中，我们会直接使用 key 和 value 分别代表 map 的键和值。而且，map 集合中每个 key 都是唯一的：</p><span id="more"></span> <p>和切片类似，作为复合类型的 map，它在 Go 中的类型表示也是由 key 类型与 value 类型组成的，就像下面代码：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">map</span>[key_type]value_type</span><br></pre></td></tr></table></figure><p>key 与 value 的类型可以相同，也可以不同：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span> <span class="comment">// key与value元素的类型相同</span></span><br><span class="line"><span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>    <span class="comment">// key与value元素的类型不同</span></span><br></pre></td></tr></table></figure><p>map 类型对 value 的类型没有限制，但是对 key 的类型却有严格要求，因为 map 类型要保证 key 的唯一性。Go 语言中要求，key 的类型必须支持“==”和“!=”两种比较操作符。但是，在 Go 语言中，函数类型、map 类型自身，以及切片只支持与 nil 的比较，而不支持同类型两个变量的比较。如果像下面代码这样，进行这些类型的比较，Go 编译器将会报错：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">s1 := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">1</span>)</span><br><span class="line">s2 := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">2</span>)</span><br><span class="line">f1 := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">f2 := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">m1 := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>)</span><br><span class="line">m2 := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>)</span><br><span class="line"><span class="built_in">println</span>(s1 == s2) <span class="comment">// 错误：invalid operation: s1 == s2 (slice can only be compared to nil)</span></span><br><span class="line"><span class="built_in">println</span>(f1 == f2) <span class="comment">// 错误：invalid operation: f1 == f2 (func can only be compared to nil)</span></span><br><span class="line"><span class="built_in">println</span>(m1 == m2) <span class="comment">// 错误：invalid operation: m1 == m2 (map can only be compared to nil)</span></span><br></pre></td></tr></table></figure><p>所以函数类型、map 类型自身，以及切片类型是不能作为 map 的 key 类型的。</p><h3 id="map-变量的声明和初始化"><a href="#map-变量的声明和初始化" class="headerlink" title="map 变量的声明和初始化"></a>map 变量的声明和初始化</h3><p>方法一：使用复合字面值初始化 map 类型变量。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Position <span class="keyword">struct</span> &#123; x <span class="keyword">float64</span> y <span class="keyword">float64</span>&#125;</span><br><span class="line"></span><br><span class="line">m := <span class="keyword">map</span>[Position]<span class="keyword">string</span>&#123;</span><br><span class="line">    &#123;<span class="number">29.935523</span>, <span class="number">52.568915</span>&#125;: <span class="string">&quot;school&quot;</span>,</span><br><span class="line">    &#123;<span class="number">25.352594</span>, <span class="number">113.304361</span>&#125;: <span class="string">&quot;shopping-mall&quot;</span>,</span><br><span class="line">    &#123;<span class="number">73.224455</span>, <span class="number">111.804306</span>&#125;: <span class="string">&quot;hospital&quot;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>方法二：使用 make 为 map 类型变量进行显式初始化。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m1 := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>) <span class="comment">// 未指定初始容量</span></span><br><span class="line">m2 := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>, <span class="number">8</span>) <span class="comment">// 指定初始容量为8</span></span><br></pre></td></tr></table></figure><h3 id="map的基本操作"><a href="#map的基本操作" class="headerlink" title="map的基本操作"></a>map的基本操作</h3><p>插入</p><p>查找：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>)</span><br><span class="line">v := m[<span class="string">&quot;key1&quot;</span>]</span><br></pre></td></tr></table></figure><p>当我们尝试去获取一个键对应的值的时候，如果这个键在 map 中并不存在，我们也会得到一个值，这个值是 value 元素类型的零值。所以go采用 comma ok的方式判断key对应的value值存在与否</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>)</span><br><span class="line">v, ok := m[<span class="string">&quot;key1&quot;</span>]</span><br><span class="line"><span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="comment">// &quot;key1&quot;不在map中</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// &quot;key1&quot;在map中，v将被赋予&quot;key1&quot;键对应的value</span></span><br></pre></td></tr></table></figure><p>删除：</p><p>只能使用delete函数，即使key值不存在，函数执行也不会失败</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">m := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span> &#123;</span><br><span class="line">  <span class="string">&quot;key1&quot;</span> : <span class="number">1</span>,</span><br><span class="line">  <span class="string">&quot;key2&quot;</span> : <span class="number">2</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fmt.Println(m) <span class="comment">// map[key1:1 key2:2]</span></span><br><span class="line"><span class="built_in">delete</span>(m, <span class="string">&quot;key2&quot;</span>) <span class="comment">// 删除&quot;key2&quot;</span></span><br><span class="line">fmt.Println(m) <span class="comment">// map[key1:1]</span></span><br></pre></td></tr></table></figure><p>遍历：</p><p>遍历 map 的键值对只有一种方法，那就是像对待切片那样通过 for range 语句对 map 数据进行遍历</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    m := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">int</span>&#123;</span><br><span class="line">        <span class="number">1</span>: <span class="number">11</span>,</span><br><span class="line">        <span class="number">2</span>: <span class="number">12</span>,</span><br><span class="line">        <span class="number">3</span>: <span class="number">13</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fmt.Printf(<span class="string">&quot;&#123; &quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> k, v := <span class="keyword">range</span> m &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;[%d, %d] &quot;</span>, k, v)</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;&#125;\n&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="map的底层实现"><a href="#map的底层实现" class="headerlink" title="map的底层实现"></a>map的底层实现</h3><p>待补充</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;本文介绍go的另一个复合类型 map&lt;/p&gt;
-&lt;h3 id=&quot;什么是map类型&quot;&gt;&lt;a href=&quot;#什么是map类型&quot; class=&quot;headerlink&quot; title=&quot;什么是map类型&quot;&gt;&lt;/a&gt;什么是map类型&lt;/h3&gt;&lt;p&gt;map 是 Go 语言提供的一种抽象数据类型，它表示一组无序的键值对。在后面的讲解中，我们会直接使用 key 和 value 分别代表 map 的键和值。而且，map 集合中每个 key 都是唯一的：&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Go语言学习" scheme="https://alexhuihui.github.io/categories/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/"/>
-    
-    
-    <category term="Go" scheme="https://alexhuihui.github.io/tags/Go/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【ElasticSearch】Elasticsearch简介及其发展历史</title>
-    <link href="https://alexhuihui.github.io/article/20230228.html"/>
-    <id>https://alexhuihui.github.io/article/20230228.html</id>
-    <published>2023-02-28T11:53:28.000Z</published>
-    <updated>2023-02-28T11:54:24.139Z</updated>
-    
-    <content type="html"><![CDATA[<p>Elasticsearch 是一种开源的搜索引擎，它采用 Lucene 库作为底层搜索引擎，并且通过 RESTful API 提供分布式搜索和分析功能。 Elasticsearch 能够快速地处理大量的结构化和非结构化数据，并提供了全文搜索、聚合分析、地理空间搜索等多种功能。</p><span id="more"></span> <p>Elasticsearch 的发展历史可以追溯到 2010 年，当时 Shay Banon（现在是 Elasticsearch 公司的 CEO）开始开发一种名为 Compass 的搜索引擎。随着时间的推移，Compass 逐渐发展成为 Elasticsearch。Elasticsearch 在开源社区得到了广泛的关注和使用，并且逐渐成为一种非常流行的搜索引擎。</p><p>Elasticsearch 的一个典型应用场景是日志分析。例如，当一个公司的网络设备、服务器和应用程序发生故障时，日志数据通常会被记录下来。使用 Elasticsearch 可以帮助工程师快速地查找故障原因，例如确定哪些设备、服务器或应用程序出现了问题。Elasticsearch 还可以与 Kibana 等工具集成，使用户可以可视化地分析数据。</p><p>以下是 Elasticsearch 的一些主要特点：</p><p>分布式： Elasticsearch 是一种分布式搜索引擎，可以跨多台服务器分布式地存储和处理数据。这使得 Elasticsearch 具有高可用性、容错性和可扩展性。</p><p>实时搜索和分析： Elasticsearch 可以实时地搜索和分析数据，使用户可以及时地获得最新的结果。</p><p>全文搜索： Elasticsearch 可以对全文进行搜索，支持多种语言和复杂查询。</p><p>聚合分析： Elasticsearch 可以对数据进行聚合分析，例如计算平均值、最大值、最小值等等。</p><p>地理空间搜索： Elasticsearch 支持地理空间搜索，使用户可以在地图上搜索位置相关的信息。</p><p>总之，Elasticsearch 是一种功能强大、可靠的搜索引擎，它在搜索、分析和可视化数据方面都有广泛的应用。</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;Elasticsearch 是一种开源的搜索引擎，它采用 Lucene 库作为底层搜索引擎，并且通过 RESTful API 提供分布式搜索和分析功能。 Elasticsearch 能够快速地处理大量的结构化和非结构化数据，并提供了全文搜索、聚合分析、地理空间搜索等多种功能。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="ElasticSearch" scheme="https://alexhuihui.github.io/categories/ElasticSearch/"/>
-    
-    
-    <category term="ElasticSearch" scheme="https://alexhuihui.github.io/tags/ElasticSearch/"/>
-    
-    <category term="linux" scheme="https://alexhuihui.github.io/tags/linux/"/>
     
   </entry>
   
