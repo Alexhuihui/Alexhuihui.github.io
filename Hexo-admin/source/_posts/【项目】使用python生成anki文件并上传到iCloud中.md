@@ -40,7 +40,7 @@ class Cloud(object):
 
 ### 效果图
 
-上传的效果
+ def get_original():    connect = Connect.get_original_connect()    select_sql = '''select * from table'''    cursor = connect.cursor()    cursor.execute(select_sql)    # 获取所有记录列表    return cursor.fetchall()python
 
 ![](https://raw.githubusercontent.com/Alexhuihui/photo/main/ea1031963c18781be9686d2a3efe0e4.jpg)
 

@@ -46,7 +46,7 @@ tags: gRPC
 > </dependency>
 > ```
 
-方式三：
+ map[key_type]value_typego
 
 > <dependency>
 >   <groupId>io.grpc</groupId>
