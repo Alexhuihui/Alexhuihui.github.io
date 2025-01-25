@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>【技术分享】Spring声明式事务的正确使用 | 秋过冬漫长</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <meta name="description" content="java">
+  
+  
+    <meta name="keywords" content="技术博客">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="秋过冬漫长" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">秋过冬漫长</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有比脚更长的路，走过去，前面是个天！</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-【技术分享】Spring声明式事务的正确使用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      【技术分享】Spring声明式事务的正确使用
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2024-01-18T11:54:06.000Z" itemprop="datePublished">2024年01月18日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">技术分享</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/article/20240118.html#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>大家肯定对@Transactional这个注解很熟悉，也对事务有着详细的了解，也知道多个数据库操作需要通过事务来保证一致性和原子性。但是很少会关注事务是否生效、有没有出错。这类问题也比较难在测试阶段发现，当出现线上问题的时候不可避免的会产生大量脏数据。所以这次我分享的内容就是帮助大家理清楚使用@Transactional的思路，避免使用不当产生bug。</p>
+<span id="more"></span> 
+
+<h3 id="事务为什么不生效"><a href="#事务为什么不生效" class="headerlink" title="事务为什么不生效"></a>事务为什么不生效</h3><p>很多同学以为只要加了这个注解就不需要管它了，其实不尽然。可以看看下述例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//一个公共方法供Controller调用，内部调用事务性的私有方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">createUserWrong1</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.createUserPrivate(<span class="keyword">new</span> UserEntity(name));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;create user failed because &#123;&#125;&quot;</span>, ex.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findByName(name).size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//标记了@Transactional的private方法</span></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createUserPrivate</span><span class="params">(UserEntity entity)</span> </span>&#123;</span><br><span class="line">        userRepository.save(entity);</span><br><span class="line">        <span class="keyword">if</span> (entity.getName().contains(<span class="string">&quot;test&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;invalid username!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//根据用户名查询用户数</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getUserCount</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findByName(name).size();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>只有定义在public方法上的 @Transactional 才能生效</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">createUserWrong2</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.createUserPublic(<span class="keyword">new</span> UserEntity(name));</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">        log.error(<span class="string">&quot;create user failed because &#123;&#125;&quot;</span>, ex.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> userRepository.findByName(name).size();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//标记了@Transactional的public方法</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createUserPublic</span><span class="params">(UserEntity entity)</span> </span>&#123;</span><br><span class="line">    userRepository.save(entity);</span><br><span class="line">    <span class="keyword">if</span> (entity.getName().contains(<span class="string">&quot;test&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;invalid username!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>必须通过代理过的类从外部调用目标方法才能生效</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;right2&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">right2</span><span class="params">(<span class="meta">@RequestParam(&quot;name&quot;)</span> String name)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        userService.createUserPublic(<span class="keyword">new</span> UserEntity(name));</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">        log.error(<span class="string">&quot;create user failed because &#123;&#125;&quot;</span>, ex.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> userService.getUserCount(name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line"> <span class="comment">// This is an around advice: Invoke the next interceptor in the chain.</span></span><br><span class="line"> <span class="comment">// This will normally result in a target object being invoked.</span></span><br><span class="line"> retVal = invocation.proceedWithInvocation();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line"> <span class="comment">// target invocation exception</span></span><br><span class="line"> completeTransactionAfterThrowing(txInfo, ex);</span><br><span class="line"> <span class="keyword">throw</span> ex;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">finally</span> &#123;</span><br><span class="line"> cleanupTransactionInfo(txInfo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>只有异常传播出了标记了 @Transactional 注解的方法，事务才能回滚</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The default behavior is as with EJB: rollback on unchecked exception</span></span><br><span class="line"><span class="comment"> * (&#123;<span class="doctag">@link</span> RuntimeException&#125;), assuming an unexpected outcome outside of any</span></span><br><span class="line"><span class="comment"> * business rules. Additionally, we also attempt to rollback on &#123;<span class="doctag">@link</span> Error&#125; which</span></span><br><span class="line"><span class="comment"> * is clearly an unexpected outcome as well. By contrast, a checked exception is</span></span><br><span class="line"><span class="comment"> * considered a business exception and therefore a regular expected outcome of the</span></span><br><span class="line"><span class="comment"> * transactional business method, i.e. a kind of alternative return value which</span></span><br><span class="line"><span class="comment"> * still allows for regular completion of resource operations.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;This is largely consistent with TransactionTemplate&#x27;s default behavior,</span></span><br><span class="line"><span class="comment"> * except that TransactionTemplate also rolls back on undeclared checked exceptions</span></span><br><span class="line"><span class="comment"> * (a corner case). For declarative transactions, we expect checked exceptions to be</span></span><br><span class="line"><span class="comment"> * intentionally declared as business exceptions, leading to a commit by default.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> org.springframework.transaction.support.TransactionTemplate#execute</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">rollbackOn</span><span class="params">(Throwable ex)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">return</span> (ex <span class="keyword">instanceof</span> RuntimeException || ex <span class="keyword">instanceof</span> Error);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>默认出现 RuntimeException（非受检异常）或 Error 的时候，Spring 才会回滚事务（可以指定回滚异常）</li>
+</ol>
+<h3 id="事务传播"><a href="#事务传播" class="headerlink" title="事务传播"></a>事务传播</h3><p>有现在这个场景，注册主会员和注册子用户，要求注册子用户失败不影响主会员的注册，下述伪代码，可以猜一下结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> SubUserService subUserService;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createUserWrong</span><span class="params">(UserEntity entity)</span> </span>&#123;</span><br><span class="line">    createMainUser(entity);</span><br><span class="line">    subUserService.createSubUserWithExceptionWrong(entity);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createMainUser</span><span class="params">(UserEntity entity)</span> </span>&#123;</span><br><span class="line">    userRepository.save(entity);</span><br><span class="line">    log.info(<span class="string">&quot;createMainUser finish&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码异常跑出了@Transactional 注解标记的 createUserWrong 方法，Spring 会回滚事务</p>
+<p>修改之后如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createUserWrong2</span><span class="params">(UserEntity entity)</span> </span>&#123;</span><br><span class="line">    createMainUser(entity);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        subUserService.createSubUserWithExceptionWrong(entity);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">        log.error(<span class="string">&quot;create sub user error:&#123;&#125;&quot;</span>, ex.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>虽然捕获了异常，但是因为没有开启新事务，而当前事务因为异常已经被标记为rollback了，所以最终还是会回滚。</p>
+<p>看到这里就清楚了，只能让处理子用户的逻辑运行在单独的事务中，这就用到了SPRING的事务传播机制</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional(propagation = Propagation.REQUIRES_NEW)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createSubUserWithExceptionRight</span><span class="params">(UserEntity entity)</span> </span>&#123;</span><br><span class="line">    log.info(<span class="string">&quot;createSubUserWithExceptionRight start&quot;</span>);</span><br><span class="line">    userRepository.save(entity);</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;invalid status&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createUserRight</span><span class="params">(UserEntity entity)</span> </span>&#123;</span><br><span class="line">    createMainUser(entity);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        subUserService.createSubUserWithExceptionRight(entity);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">        <span class="comment">// 捕获异常，防止主方法回滚</span></span><br><span class="line">        log.error(<span class="string">&quot;create sub user error:&#123;&#125;&quot;</span>, ex.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望这次分享能帮助大家正确处理业务代码中的事务。</p>
+<h3 id="实际使用踩的坑"><a href="#实际使用踩的坑" class="headerlink" title="实际使用踩的坑"></a>实际使用踩的坑</h3><h4 id="多数据源中不能使用事务"><a href="#多数据源中不能使用事务" class="headerlink" title="多数据源中不能使用事务"></a>多数据源中不能使用事务</h4><h4 id="事务和分布式锁使用的坑"><a href="#事务和分布式锁使用的坑" class="headerlink" title="事务和分布式锁使用的坑"></a>事务和分布式锁使用的坑</h4><p>现象：业务中加了分布式锁，也做了幂等处理如果业务ID存在相同的数据则直接返回。但还是会生成2条一样的数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Around(&quot;@annotation(redisLock)&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">around</span><span class="params">(ProceedingJoinPoint joinPoint, RedisLock redisLock)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">    String spel = redisLock.key();</span><br><span class="line">    String lockName = redisLock.lockName();</span><br><span class="line">    String redisLockKey = getRedisKey(joinPoint, lockName, spel);</span><br><span class="line">    log.info(<span class="string">&quot;生成的 redisKey 是 -&gt; &#123;&#125;&quot;</span>, redisLockKey);</span><br><span class="line">    RLock rLock = redissonClient.getLock(redisLockKey);</span><br><span class="line">    Object result;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        rLock.lock(redisLock.expire(), redisLock.timeUnit());</span><br><span class="line">        <span class="comment">//执行方法</span></span><br><span class="line">        result = joinPoint.proceed();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException interruptedException) &#123;</span><br><span class="line">        log.error(<span class="string">&quot;获取分布式锁失败, &quot;</span>, interruptedException);</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;获取分布式锁失败&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (rLock.isLocked()) &#123;</span><br><span class="line">            rLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Transactional(rollbackFor = RuntimeException.class)</span></span><br><span class="line"><span class="meta">@RedisLock(lockName = &quot;test&quot;, key = &quot;test&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 根据手机号查询用户</span></span><br><span class="line">    User user = bizService.queryByPhone(<span class="string">&quot;17770848782&quot;</span>);</span><br><span class="line">    log.info(<span class="string">&quot;user===&#123;&#125;&quot;</span>, user);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Transactional(rollbackFor = RuntimeException.class)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 根据手机号查询用户</span></span><br><span class="line">    User user = bizService.queryByPhone(<span class="string">&quot;17770848782&quot;</span>);</span><br><span class="line">    log.info(<span class="string">&quot;user2===&#123;&#125;&quot;</span>, user);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Alexhuihui/photo/main/c87dacaa25d90940960381b89cbcc36.png"><img src="https://raw.githubusercontent.com/Alexhuihui/photo/main/c87dacaa25d90940960381b89cbcc36.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Alexhuihui/photo/main/2c863c0d9bede38ff6d4494ffd1e913.png"><img src="https://raw.githubusercontent.com/Alexhuihui/photo/main/2c863c0d9bede38ff6d4494ffd1e913.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Alexhuihui/photo/main/31a1043cd83c4866d202ba4c86efd5a.png"><img src="https://raw.githubusercontent.com/Alexhuihui/photo/main/31a1043cd83c4866d202ba4c86efd5a.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Alexhuihui/photo/main/152cfd85f8f8c853ed32f308155f461.png"><img src="https://raw.githubusercontent.com/Alexhuihui/photo/main/152cfd85f8f8c853ed32f308155f461.png" alt="img"></a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line"><span class="meta">@Operation(summary = &quot;test2&quot;)</span></span><br><span class="line"><span class="meta">@RedisLock(lockName = &quot;test2&quot;, key = &quot;test2&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ObjectResponse&lt;String&gt; <span class="title">test2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    userAppService.test2();</span><br><span class="line">    <span class="keyword">return</span> ObjectResponse.success();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@PostMapping</span></span><br><span class="line"><span class="meta">@Operation(summary = &quot;test&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ObjectResponse&lt;String&gt; <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    userAppService.test();</span><br><span class="line">    <span class="keyword">return</span> ObjectResponse.success();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结论：当使用分布式锁和事务时，因为切面处理是用的先进后出的栈，又因为事务处理的优先级是默认最低的，所以如果没有知道分布式锁的优先级就会导致锁先于事务释放，导致可能出现事务的隔离性被破坏，产生脏数据。</p>
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%94%9F%E6%95%88"><span class="toc-text">事务为什么不生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD"><span class="toc-text">事务传播</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E4%BD%BF%E7%94%A8%E8%B8%A9%E7%9A%84%E5%9D%91"><span class="toc-text">实际使用踩的坑</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B8%AD%E4%B8%8D%E8%83%BD%E4%BD%BF%E7%94%A8%E4%BA%8B%E5%8A%A1"><span class="toc-text">多数据源中不能使用事务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%BD%BF%E7%94%A8%E7%9A%84%E5%9D%91"><span class="toc-text">事务和分布式锁使用的坑</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://alexhuihui.github.io/article/20240118.html">https://alexhuihui.github.io/article/20240118.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" rel="tag">技术分享</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/article/20240127.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          【事务处理】分布式事务
+        
+      </div>
+    </a>
+  
+  
+    <a href="/article/20231206.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">【ELK】springboot结合elk搭建日志平台</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/article/20250125.html">【DNS】DNS的架构</a>
+          </li>
+        
+          <li>
+            <a href="/article/20250113.html">使用 cloudflare tunnel</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240525.html">【Spring】缓存注解@Cacheable、@CacheEvict、@CachePut使用</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240522.html">【MySQL】索引失效的场景</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240430.html">【Docker】容器的本质</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AES/" style="font-size: 10px;">AES</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/Docker/" style="font-size: 15px;">Docker</a> <a href="/tags/ELK/" style="font-size: 10px;">ELK</a> <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/Go/" style="font-size: 20px;">Go</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/JWT/" style="font-size: 15px;">JWT</a> <a href="/tags/Kafka/" style="font-size: 15px;">Kafka</a> <a href="/tags/Kubernetes/" style="font-size: 15px;">Kubernetes</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/MD5/" style="font-size: 10px;">MD5</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 15px;">Mybatis</a> <a href="/tags/RSA/" style="font-size: 10px;">RSA</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/RocketMq/" style="font-size: 10px;">RocketMq</a> <a href="/tags/Spring/" style="font-size: 10px;">Spring</a> <a href="/tags/ZooKeeper/" style="font-size: 10px;">ZooKeeper</a> <a href="/tags/anki/" style="font-size: 10px;">anki</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/cloudflare/" style="font-size: 10px;">cloudflare</a> <a href="/tags/gRPC/" style="font-size: 10px;">gRPC</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/genanki/" style="font-size: 10px;">genanki</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/minikube/" style="font-size: 10px;">minikube</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/oauth2/" style="font-size: 15px;">oauth2</a> <a href="/tags/pyicloud/" style="font-size: 10px;">pyicloud</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/spring-authorization-server/" style="font-size: 15px;">spring-authorization-server</a> <a href="/tags/tunnel/" style="font-size: 10px;">tunnel</a> <a href="/tags/%E4%BA%8B%E5%8A%A1/" style="font-size: 10px;">事务</a> <a href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" style="font-size: 10px;">事务处理</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">并发</a> <a href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" style="font-size: 10px;">延时队列</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" style="font-size: 10px;">微信机器人</a> <a href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" style="font-size: 15px;">技术分享</a> <a href="/tags/%E6%8E%88%E6%9D%83/" style="font-size: 10px;">授权</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E7%AD%BE%E5%90%8D/" style="font-size: 15px;">签名</a> <a href="/tags/%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">设计</a> <a href="/tags/%E9%87%8D%E6%9E%84/" style="font-size: 10px;">重构</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DNS/">DNS</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ELK/">ELK</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/">Go语言学习</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2%E6%8A%98%E8%85%BE/">Hexo博客折腾</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kubernetes/">Kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LLM/">LLM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maven/">Maven</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/RocketMq/">RocketMq</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/cloudflare/">cloudflare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gRPC/">gRPC</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/spring-authorization-server/">spring-authorization-server</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AA%E4%BA%BA%E9%A1%B9%E7%9B%AE/">个人项目</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1/">事务</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/">事务处理</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B9%B6%E5%8F%91/">并发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/">微信机器人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">技术分享</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%8D%E6%9E%84/">重构</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025年01月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024年05月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023年12月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年12月</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AES/" rel="tag">AES</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/" rel="tag">ELK</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JWT/" rel="tag">JWT</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/" rel="tag">Kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MD5/" rel="tag">MD5</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSA/" rel="tag">RSA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RocketMq/" rel="tag">RocketMq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anki/" rel="tag">anki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/" rel="tag">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudflare/" rel="tag">cloudflare</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gRPC/" rel="tag">gRPC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gcc/" rel="tag">gcc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/genanki/" rel="tag">genanki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minikube/" rel="tag">minikube</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/" rel="tag">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth2/" rel="tag">oauth2</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pyicloud/" rel="tag">pyicloud</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-authorization-server/" rel="tag">spring-authorization-server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tunnel/" rel="tag">tunnel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1/" rel="tag">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" rel="tag">事务处理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" rel="tag">延时队列</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" rel="tag">微信机器人</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" rel="tag">技术分享</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%88%E6%9D%83/" rel="tag">授权</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E7%BB%84/" rel="tag">数组</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88/" rel="tag">栈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%BE%E5%90%8D/" rel="tag">签名</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1/" rel="tag">设计</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E6%9E%84/" rel="tag">重构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%9F%E5%88%97/" rel="tag">队列</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example1.com/">site-name1</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example2.com/">site-name2</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example3.com/">site-name3</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>
+          ，
+          <i class="fa fa-views"></i>
+          <i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2025 汪永晖.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        
+            <span>Count by <a href="http://busuanzi.ibruce.info/" target="_blank">busuanzi.</a></span>
+        
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+  
+<script src="/localshare/js/social-share.js"></script>
+
+  
+<script src="/localshare/js/qrcode.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>

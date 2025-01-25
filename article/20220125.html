@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>【Go语言学习】01 | 初窥门径 | 秋过冬漫长</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <meta name="description" content="java">
+  
+  
+    <meta name="keywords" content="技术博客">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="秋过冬漫长" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">秋过冬漫长</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有比脚更长的路，走过去，前面是个天！</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-【Go语言学习】01-初窥门径" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      【Go语言学习】01 | 初窥门径
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2022-01-25T07:25:18.000Z" itemprop="datePublished">2022年01月25日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/">Go语言学习</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/article/20220125.html#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="创建hello-world程序"><a href="#创建hello-world程序" class="headerlink" title="创建hello, world程序"></a>创建<code>hello, world</code>程序</h3><h4 id="创建hello-world文件夹"><a href="#创建hello-world文件夹" class="headerlink" title="创建hello, world文件夹"></a>创建<code>hello, world</code>文件夹</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$mkdir</span> ~/goprojects // 创建一个可以集合所有专栏项目的根文件夹</span><br><span class="line"><span class="variable">$cd</span> ~/goprojects</span><br><span class="line"><span class="variable">$mkdir</span> helloworld // 创建存储helloworld示例的文件夹</span><br><span class="line"><span class="variable">$cd</span> helloworld</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span> 
+
+<h4 id="编写和运行第一个Go程序"><a href="#编写和运行第一个Go程序" class="headerlink" title="编写和运行第一个Go程序"></a>编写和运行第一个<code>Go</code>程序</h4><p>首先，我们需要创建一个名为 main.go 的源文件。</p>
+<p>Go 源文件总是用全小写字母形式的短小单词命名，并且以.go 扩展名结尾。</p>
+<p>如果要在源文件的名字中使用多个单词，我们通常直接是将多个单词连接起来作为源文件名，而不是使用其他分隔符，比如下划线。也就是说，我们通常使用 helloworld.go 作为文件名而不是 hello_world.go。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;hello, world&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>保存文件，编译和运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$go</span> build main.go</span><br><span class="line">$./main</span><br><span class="line">hello, world</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="hello-world程序的结构"><a href="#hello-world程序的结构" class="headerlink" title="hello, world程序的结构"></a><code>hello, world</code>程序的结构</h3><p>上述代码可以分成三部分剖析：</p>
+<ol>
+<li><p>package main</p>
+<blockquote>
+<p>这一行代码定义了 Go 中的一个包 package。包是 Go 语言的基本组成单元，通常使用单个的小写单词命名，一个 Go 程序本质上就是一组包的集合。所有 Go 代码都有自己隶属的包，在这里我们的“hello，world”示例的所有代码都在一个名为 main 的包中。main 包在 Go 中是一个特殊的包，整个 Go 程序中仅允许存在一个名为 main 的包</p>
+</blockquote>
+</li>
+<li><p>main 函数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;hello, world&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里的 main 函数会比较特殊：当你运行一个可执行的 Go 程序的时候，所有的代码都会从这个入口函数开始运行。</p>
+</blockquote>
+</li>
+<li><p>import “fmt”</p>
+<ul>
+<li><p>import “fmt” 一行中“fmt”代表的是包的导入路径（Import），它表示的是标准库下的 fmt 目录，整个 import 声明语句的含义是导入标准库 fmt 目录下的包；</p>
+</li>
+<li><p>fmt.Println 函数调用一行中的“fmt”代表的则是包名。</p>
+</li>
+<li><p>导入多个包可以使用圆括号</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="Go语言中程序是怎么编译的"><a href="#Go语言中程序是怎么编译的" class="headerlink" title="Go语言中程序是怎么编译的"></a><code>Go</code>语言中程序是怎么编译的</h3><p>Go 是一种编译型语言，这意味着只有你编译完 Go 程序之后，才可以将生成的可执行文件交付于其他人，并运行在没有安装 Go 的环境中。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go build main.go</span><br></pre></td></tr></table></figure>
+
+<p>当然，Go 也借鉴了动态语言的一些对开发者体验较好的特性，比如基于源码文件的直接执行，Go 提供了 run 命令可以直接运行 Go 源码文件，比如我们也可以使用下面命令直接基于 main.go 运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run main.go</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="复杂项目下Go程序的编译"><a href="#复杂项目下Go程序的编译" class="headerlink" title="复杂项目下Go程序的编译"></a>复杂项目下<code>Go</code>程序的编译</h3><p>我们新建一个项目:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$cd</span> ~/goprojects</span><br><span class="line"><span class="variable">$mkdir</span> hellomodule</span><br><span class="line"><span class="variable">$cd</span> hellomodule</span><br></pre></td></tr></table></figure>
+
+<p>在<code>hellomodule</code>文件夹中创建并编辑<code>main.go</code>文件</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;github.com/valyala/fasthttp&quot;</span></span><br><span class="line">  <span class="string">&quot;go.uber.org/zap&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> logger *zap.Logger</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger, _ = zap.NewProduction()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">fastHTTPHandler</span><span class="params">(ctx *fasthttp.RequestCtx)</span></span> &#123;</span><br><span class="line">  logger.Info(<span class="string">&quot;hello, go module&quot;</span>, zap.ByteString(<span class="string">&quot;uri&quot;</span>, ctx.RequestURI()))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fasthttp.ListenAndServe(<span class="string">&quot;:9090&quot;</span>, fastHTTPHandler)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于复杂项目的构建，我们采用 <code>Go module</code></p>
+<blockquote>
+<p>Go module 构建模式是在 Go 1.11 版本正式引入的，为的是彻底解决 Go 项目复杂版本依赖的问题，在 Go 1.16 版本中，Go module 已经成为了 Go 默认的包依赖管理机制和 Go 源码构建机制。</p>
+</blockquote>
+<p>Go Module 的核心是一个名为 go.mod 的文件，在这个文件中存储了这个 module 对第三方依赖的全部信息。</p>
+<p>通过 <code>init</code>来创建<code>go.mod</code>文件:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$go</span> mod init github.com/alexhuihui/hellomodule</span><br><span class="line">go: creating new go.mod: module github.com/bigwhite/hellomodule</span><br><span class="line">go: to add module requirements and sums:</span><br><span class="line">  go mod tidy</span><br></pre></td></tr></table></figure>
+
+<p>让我们看看生成的<code>go.mod</code>文件中有什么:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$cat</span> go.mod</span><br><span class="line">module github.com/alexhuihui/hellomodule</span><br><span class="line"></span><br><span class="line">go 1.17</span><br></pre></td></tr></table></figure>
+
+<p>其实，一个 module 就是一个包的集合，这些包和 module 一起打版本、发布和分发。go.mod 所在的目录被我们称为它声明的 module 的根目录。不过呢，这个时候的 go.mod 文件内容还比较简单，第一行内容是用于声明 module 路径（module path）的。而且，module 隐含了一个命名空间的概念，module 下每个包的导入路径都是由 module path 和包所在子目录的名字结合在一起构成。比如，如果 hellomodule 下有子目录 pkg/pkg1，那么 pkg1 下面的包的导入路径就是由 module path（github.com/alexhuihui/hellomodule）和包所在子目录的名字（pkg/pkg1）结合而成，也就是 github.com/alexhuihui/hellomodule/pkg/pkg1。另外，go.mod 的最后一行是一个 Go 版本指示符，用于表示这个 module 是在某个特定的 Go 版本的 module 语义的基础上编写的。</p>
+<p>通过 <code>go mod tidy</code>，让 <code>Go</code>工具自动添加依赖</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ go mod tidy</span><br><span class="line">go: finding module <span class="keyword">for</span> package go.uber.org/zap</span><br><span class="line">go: finding module <span class="keyword">for</span> package github.com/valyala/fasthttp</span><br><span class="line">go: downloading go.uber.org/zap v1.20.0</span><br><span class="line">go: downloading github.com/valyala/fasthttp v1.32.0</span><br><span class="line">go: found github.com/valyala/fasthttp <span class="keyword">in</span> github.com/valyala/fasthttp v1.32.0</span><br><span class="line">go: found go.uber.org/zap <span class="keyword">in</span> go.uber.org/zap v1.20.0</span><br><span class="line">go: downloading go.uber.org/atomic v1.7.0</span><br><span class="line">go: downloading go.uber.org/multierr v1.6.0</span><br><span class="line">go: downloading github.com/pkg/errors v0.8.1</span><br><span class="line">go: downloading github.com/stretchr/testify v1.7.0</span><br><span class="line">go: downloading go.uber.org/goleak v1.1.11</span><br><span class="line">go: downloading github.com/andybalholm/brotli v1.0.2</span><br><span class="line">go: downloading github.com/klauspost/compress v1.13.4</span><br><span class="line">go: downloading github.com/valyala/bytebufferpool v1.0.0</span><br><span class="line">go: downloading gopkg.in/yaml.v2 v2.2.8</span><br><span class="line">go: downloading github.com/davecgh/go-spew v1.1.1</span><br><span class="line">go: downloading github.com/pmezard/go-difflib v1.0.0</span><br><span class="line">go: downloading gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b</span><br><span class="line">go: downloading github.com/benbjohnson/clock v1.1.0</span><br></pre></td></tr></table></figure>
+
+<p>下载依赖的时候你可能会碰上超时的问题，执行以下命令即可:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go env -w GOPROXY=https://goproxy.cn,direct</span><br></pre></td></tr></table></figure>
+
+<p><code>go mod tidy</code>执行之后，<code>go.mod</code>就变成了这个样子:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">module github.com/bigwhite/hellomodule</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="number">1.17</span></span><br><span class="line"></span><br><span class="line">require (</span><br><span class="line">        github.com/valyala/fasthttp v1<span class="number">.32</span><span class="number">.0</span></span><br><span class="line">        <span class="keyword">go</span>.uber.org/zap v1<span class="number">.20</span><span class="number">.0</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">require (</span><br><span class="line">        github.com/andybalholm/brotli v1<span class="number">.0</span><span class="number">.2</span> <span class="comment">// indirect</span></span><br><span class="line">        github.com/klauspost/compress v1<span class="number">.13</span><span class="number">.4</span> <span class="comment">// indirect</span></span><br><span class="line">        github.com/valyala/bytebufferpool v1<span class="number">.0</span><span class="number">.0</span> <span class="comment">// indirect</span></span><br><span class="line">        <span class="keyword">go</span>.uber.org/atomic v1<span class="number">.7</span><span class="number">.0</span> <span class="comment">// indirect</span></span><br><span class="line">        <span class="keyword">go</span>.uber.org/multierr v1<span class="number">.6</span><span class="number">.0</span> <span class="comment">// indirect</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>这个时候，go.mod 已经记录了 hellomodule 直接依赖的包的信息。不仅如此，hellomodule 目录下还多了一个名为 go.sum 的文件，这个文件记录了 hellomodule 的直接依赖和间接依赖包的相关版本的 hash 值，用来校验本地包的真实性。在构建的时候，如果本地依赖包的 hash 值与 go.sum 文件中记录的不一致，就会被拒绝构建。</p>
+<p>有了 go.mod 以及 hellomodule 依赖的包版本信息后，我们再来执行构建：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$go</span> build main.go</span><br><span class="line"><span class="variable">$ls</span></span><br><span class="line">go.mod    go.sum    main    main.go</span><br></pre></td></tr></table></figure>
+
+<p>成功构建后，执行<code>main</code>命令，然后新开一个窗口执行<code>curl localhost:9090/foo/bar</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ./main </span><br><span class="line">&#123;<span class="string">&quot;level&quot;</span>:<span class="string">&quot;info&quot;</span>,<span class="string">&quot;ts&quot;</span>:1643097830.6936307,<span class="string">&quot;caller&quot;</span>:<span class="string">&quot;hellomodule/main.go:16&quot;</span>,<span class="string">&quot;msg&quot;</span>:<span class="string">&quot;hello, go module&quot;</span>,<span class="string">&quot;uri&quot;</span>:<span class="string">&quot;/foo/bar&quot;</span>&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><p>Go 包是 Go 语言的基本组成单元。一个 Go 程序就是一组包的集合，所有 Go 代码都位于包中；</p>
+</li>
+<li><p>Go 源码可以导入其他 Go 包，并使用其中的导出语法元素，包括类型、变量、函数、方法等，而且，main 函数是整个 Go 应用的入口函数；</p>
+</li>
+<li><p>Go 源码需要先编译，再分发和运行。如果是单 Go 源文件的情况，我们可以直接使用 go build 命令 +Go 源文件名的方式编译。不过，对于复杂的 Go 项目，我们需要在 Go Module 的帮助下完成项目的构建。</p>
+</li>
+</ul>
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAhello-world%E7%A8%8B%E5%BA%8F"><span class="toc-text">创建hello, world程序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAhello-world%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-text">创建hello, world文件夹</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E5%92%8C%E8%BF%90%E8%A1%8C%E7%AC%AC%E4%B8%80%E4%B8%AAGo%E7%A8%8B%E5%BA%8F"><span class="toc-text">编写和运行第一个Go程序</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hello-world%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-text">hello, world程序的结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Go%E8%AF%AD%E8%A8%80%E4%B8%AD%E7%A8%8B%E5%BA%8F%E6%98%AF%E6%80%8E%E4%B9%88%E7%BC%96%E8%AF%91%E7%9A%84"><span class="toc-text">Go语言中程序是怎么编译的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E9%A1%B9%E7%9B%AE%E4%B8%8BGo%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BC%96%E8%AF%91"><span class="toc-text">复杂项目下Go程序的编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://alexhuihui.github.io/article/20220125.html">https://alexhuihui.github.io/article/20220125.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/" rel="tag">Go</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/article/20220210.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          【gRPC】Java和Python使用gRPC
+        
+      </div>
+    </a>
+  
+  
+    <a href="/article/20220124.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">【微信机器人】(一)CentOS7安装wechaty运行环境</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/article/20250125.html">【DNS】DNS的架构</a>
+          </li>
+        
+          <li>
+            <a href="/article/20250113.html">使用 cloudflare tunnel</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240525.html">【Spring】缓存注解@Cacheable、@CacheEvict、@CachePut使用</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240522.html">【MySQL】索引失效的场景</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240430.html">【Docker】容器的本质</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AES/" style="font-size: 10px;">AES</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/Docker/" style="font-size: 15px;">Docker</a> <a href="/tags/ELK/" style="font-size: 10px;">ELK</a> <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/Go/" style="font-size: 20px;">Go</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/JWT/" style="font-size: 15px;">JWT</a> <a href="/tags/Kafka/" style="font-size: 15px;">Kafka</a> <a href="/tags/Kubernetes/" style="font-size: 15px;">Kubernetes</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/MD5/" style="font-size: 10px;">MD5</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 15px;">Mybatis</a> <a href="/tags/RSA/" style="font-size: 10px;">RSA</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/RocketMq/" style="font-size: 10px;">RocketMq</a> <a href="/tags/Spring/" style="font-size: 10px;">Spring</a> <a href="/tags/ZooKeeper/" style="font-size: 10px;">ZooKeeper</a> <a href="/tags/anki/" style="font-size: 10px;">anki</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/cloudflare/" style="font-size: 10px;">cloudflare</a> <a href="/tags/gRPC/" style="font-size: 10px;">gRPC</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/genanki/" style="font-size: 10px;">genanki</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/minikube/" style="font-size: 10px;">minikube</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/oauth2/" style="font-size: 15px;">oauth2</a> <a href="/tags/pyicloud/" style="font-size: 10px;">pyicloud</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/spring-authorization-server/" style="font-size: 15px;">spring-authorization-server</a> <a href="/tags/tunnel/" style="font-size: 10px;">tunnel</a> <a href="/tags/%E4%BA%8B%E5%8A%A1/" style="font-size: 10px;">事务</a> <a href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" style="font-size: 10px;">事务处理</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">并发</a> <a href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" style="font-size: 10px;">延时队列</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" style="font-size: 10px;">微信机器人</a> <a href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" style="font-size: 15px;">技术分享</a> <a href="/tags/%E6%8E%88%E6%9D%83/" style="font-size: 10px;">授权</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E7%AD%BE%E5%90%8D/" style="font-size: 15px;">签名</a> <a href="/tags/%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">设计</a> <a href="/tags/%E9%87%8D%E6%9E%84/" style="font-size: 10px;">重构</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DNS/">DNS</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ELK/">ELK</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/">Go语言学习</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2%E6%8A%98%E8%85%BE/">Hexo博客折腾</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kubernetes/">Kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LLM/">LLM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maven/">Maven</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/RocketMq/">RocketMq</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/cloudflare/">cloudflare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gRPC/">gRPC</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/spring-authorization-server/">spring-authorization-server</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AA%E4%BA%BA%E9%A1%B9%E7%9B%AE/">个人项目</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1/">事务</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/">事务处理</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B9%B6%E5%8F%91/">并发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/">微信机器人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">技术分享</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%8D%E6%9E%84/">重构</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025年01月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024年05月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023年12月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年12月</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AES/" rel="tag">AES</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/" rel="tag">ELK</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JWT/" rel="tag">JWT</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/" rel="tag">Kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MD5/" rel="tag">MD5</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSA/" rel="tag">RSA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RocketMq/" rel="tag">RocketMq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anki/" rel="tag">anki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/" rel="tag">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudflare/" rel="tag">cloudflare</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gRPC/" rel="tag">gRPC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gcc/" rel="tag">gcc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/genanki/" rel="tag">genanki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minikube/" rel="tag">minikube</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/" rel="tag">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth2/" rel="tag">oauth2</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pyicloud/" rel="tag">pyicloud</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-authorization-server/" rel="tag">spring-authorization-server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tunnel/" rel="tag">tunnel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1/" rel="tag">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" rel="tag">事务处理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" rel="tag">延时队列</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" rel="tag">微信机器人</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" rel="tag">技术分享</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%88%E6%9D%83/" rel="tag">授权</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E7%BB%84/" rel="tag">数组</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88/" rel="tag">栈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%BE%E5%90%8D/" rel="tag">签名</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1/" rel="tag">设计</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E6%9E%84/" rel="tag">重构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%9F%E5%88%97/" rel="tag">队列</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example1.com/">site-name1</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example2.com/">site-name2</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example3.com/">site-name3</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>
+          ，
+          <i class="fa fa-views"></i>
+          <i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2025 汪永晖.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        
+            <span>Count by <a href="http://busuanzi.ibruce.info/" target="_blank">busuanzi.</a></span>
+        
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+  
+<script src="/localshare/js/social-share.js"></script>
+
+  
+<script src="/localshare/js/qrcode.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>

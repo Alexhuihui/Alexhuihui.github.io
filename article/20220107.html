@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>【RocketMq】rocketmq概念和特性 | 秋过冬漫长</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <meta name="description" content="java">
+  
+  
+    <meta name="keywords" content="技术博客">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="秋过冬漫长" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">秋过冬漫长</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有比脚更长的路，走过去，前面是个天！</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-【RocketMq】rocketmq概念和特性" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      【RocketMq】rocketmq概念和特性
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2022-01-07T03:53:49.000Z" itemprop="datePublished">2022年01月07日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/RocketMq/">RocketMq</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/article/20220107.html#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><hr>
+<h4 id="1-消息模型（Message-Model）"><a href="#1-消息模型（Message-Model）" class="headerlink" title="1 消息模型（Message Model）"></a>1 消息模型（Message Model）</h4><p>RocketMQ主要由 Producer、Broker、Consumer 三部分组成，其中Producer 负责生产消息，Consumer 负责消费消息，Broker 负责存储消息。Broker 在实际部署过程中对应一台服务器，每个 Broker 可以存储多个Topic的消息，每个Topic的消息也可以分片存储于不同的 Broker。Message Queue 用于存储消息的物理地址，每个Topic中的消息地址存储于多个 Message Queue 中。ConsumerGroup 由多个Consumer 实例构成。</p>
+<span id="more"></span> 
+
+<h4 id="2-消息生产者（Producer）"><a href="#2-消息生产者（Producer）" class="headerlink" title="2 消息生产者（Producer）"></a>2 消息生产者（Producer）</h4><p>负责生产消息，一般由业务系统负责生产消息。一个消息生产者会把业务应用系统里产生的消息发送到broker服务器。RocketMQ提供多种发送方式，同步发送、异步发送、顺序发送、单向发送。同步和异步方式均需要Broker返回确认信息，单向发送不需要。</p>
+<h4 id="3-消息消费者（Consumer）"><a href="#3-消息消费者（Consumer）" class="headerlink" title="3 消息消费者（Consumer）"></a>3 消息消费者（Consumer）</h4><p>负责消费消息，一般是后台系统负责异步消费。一个消息消费者会从Broker服务器拉取消息、并将其提供给应用程序。从用户应用的角度而言提供了两种消费形式：拉取式消费、推动式消费。</p>
+<h4 id="4-主题（Topic）"><a href="#4-主题（Topic）" class="headerlink" title="4 主题（Topic）"></a>4 主题（Topic）</h4><p>表示一类消息的集合，每个主题包含若干条消息，每条消息只能属于一个主题，是RocketMQ进行消息订阅的基本单位。</p>
+<h4 id="5-代理服务器（Broker-Server）"><a href="#5-代理服务器（Broker-Server）" class="headerlink" title="5 代理服务器（Broker Server）"></a>5 代理服务器（Broker Server）</h4><p>消息中转角色，负责存储消息、转发消息。代理服务器在RocketMQ系统中负责接收从生产者发送来的消息并存储、同时为消费者的拉取请求作准备。代理服务器也存储消息相关的元数据，包括消费者组、消费进度偏移和主题和队列消息等。</p>
+<h4 id="6-名字服务（Name-Server）"><a href="#6-名字服务（Name-Server）" class="headerlink" title="6 名字服务（Name Server）"></a>6 名字服务（Name Server）</h4><p>名称服务充当路由消息的提供者。生产者或消费者能够通过名字服务查找各主题相应的Broker IP列表。多个Namesrv实例组成集群，但相互独立，没有信息交换。</p>
+<h4 id="7-拉取式消费（Pull-Consumer）"><a href="#7-拉取式消费（Pull-Consumer）" class="headerlink" title="7 拉取式消费（Pull Consumer）"></a>7 拉取式消费（Pull Consumer）</h4><p>Consumer消费的一种类型，应用通常主动调用Consumer的拉消息方法从Broker服务器拉消息、主动权由应用控制。一旦获取了批量消息，应用就会启动消费过程。</p>
+<h4 id="8-推动式消费（Push-Consumer）"><a href="#8-推动式消费（Push-Consumer）" class="headerlink" title="8 推动式消费（Push Consumer）"></a>8 推动式消费（Push Consumer）</h4><p>Consumer消费的一种类型，该模式下Broker收到数据后会主动推送给消费端，该消费模式一般实时性较高。</p>
+<h4 id="9-生产者组（Producer-Group）"><a href="#9-生产者组（Producer-Group）" class="headerlink" title="9 生产者组（Producer Group）"></a>9 生产者组（Producer Group）</h4><p>同一类Producer的集合，这类Producer发送同一类消息且发送逻辑一致。如果发送的是事务消息且原始生产者在发送之后崩溃，则Broker服务器会联系同一生产者组的其他生产者实例以提交或回溯消费。</p>
+<h4 id="10-消费者组（Consumer-Group）"><a href="#10-消费者组（Consumer-Group）" class="headerlink" title="10 消费者组（Consumer Group）"></a>10 消费者组（Consumer Group）</h4><p>同一类Consumer的集合，这类Consumer通常消费同一类消息且消费逻辑一致。消费者组使得在消息消费方面，实现负载均衡和容错的目标变得非常容易。要注意的是，消费者组的消费者实例必须订阅完全相同的Topic。RocketMQ 支持两种消息模式：集群消费（Clustering）和广播消费（Broadcasting）。</p>
+<h4 id="11-集群消费（Clustering）"><a href="#11-集群消费（Clustering）" class="headerlink" title="11 集群消费（Clustering）"></a>11 集群消费（Clustering）</h4><p>集群消费模式下,相同Consumer Group的每个Consumer实例平均分摊消息。</p>
+<h4 id="12-广播消费（Broadcasting）"><a href="#12-广播消费（Broadcasting）" class="headerlink" title="12 广播消费（Broadcasting）"></a>12 广播消费（Broadcasting）</h4><p>广播消费模式下，相同Consumer Group的每个Consumer实例都接收全量的消息。</p>
+<h4 id="13-普通顺序消息（Normal-Ordered-Message）"><a href="#13-普通顺序消息（Normal-Ordered-Message）" class="headerlink" title="13 普通顺序消息（Normal Ordered Message）"></a>13 普通顺序消息（Normal Ordered Message）</h4><p>普通顺序消费模式下，消费者通过同一个消息队列（ Topic 分区，称作 Message Queue） 收到的消息是有顺序的，不同消息队列收到的消息则可能是无顺序的。</p>
+<h4 id="14-严格顺序消息（Strictly-Ordered-Message）"><a href="#14-严格顺序消息（Strictly-Ordered-Message）" class="headerlink" title="14 严格顺序消息（Strictly Ordered Message）"></a>14 严格顺序消息（Strictly Ordered Message）</h4><p>严格顺序消息模式下，消费者收到的所有消息均是有顺序的。</p>
+<h4 id="15-消息（Message）"><a href="#15-消息（Message）" class="headerlink" title="15 消息（Message）"></a>15 消息（Message）</h4><p>消息系统所传输信息的物理载体，生产和消费数据的最小单位，每条消息必须属于一个主题。RocketMQ中每个消息拥有唯一的Message ID，且可以携带具有业务标识的Key。系统提供了通过Message ID和Key查询消息的功能。</p>
+<h4 id="16-标签（Tag）"><a href="#16-标签（Tag）" class="headerlink" title="16 标签（Tag）"></a>16 标签（Tag）</h4><p>为消息设置的标志，用于同一主题下区分不同类型的消息。来自同一业务单元的消息，可以根据不同业务目的在同一主题下设置不同标签。标签能够有效地保持代码的清晰度和连贯性，并优化RocketMQ提供的查询系统。消费者可以根据Tag实现对不同子主题的不同消费逻辑，实现更好的扩展性。</p>
+<hr>
+<h3 id="特性-features"><a href="#特性-features" class="headerlink" title="特性(features)"></a>特性(features)</h3><hr>
+<h4 id="1-订阅与发布"><a href="#1-订阅与发布" class="headerlink" title="1 订阅与发布"></a>1 订阅与发布</h4><p>消息的发布是指某个生产者向某个topic发送消息；消息的订阅是指某个消费者关注了某个topic中带有某些tag的消息，进而从该topic消费数据。</p>
+<h4 id="2-消息顺序"><a href="#2-消息顺序" class="headerlink" title="2 消息顺序"></a>2 消息顺序</h4><p>消息有序指的是一类消息消费时，能按照发送的顺序来消费。例如：一个订单产生了三条消息分别是订单创建、订单付款、订单完成。消费时要按照这个顺序消费才能有意义，但是同时订单之间是可以并行消费的。RocketMQ可以严格的保证消息有序。</p>
+<p>顺序消息分为全局顺序消息与分区顺序消息，全局顺序是指某个Topic下的所有消息都要保证顺序；部分顺序消息只要保证每一组消息被顺序消费即可。</p>
+<ul>
+<li><p>全局顺序 对于指定的一个 Topic，所有消息按照严格的先入先出（FIFO）的顺序进行发布和消费。 适用场景：性能要求不高，所有的消息严格按照 FIFO 原则进行消息发布和消费的场景</p>
+</li>
+<li><p>分区顺序 对于指定的一个 Topic，所有消息根据 sharding key 进行区块分区。 同一个分区内的消息按照严格的 FIFO 顺序进行发布和消费。 Sharding key 是顺序消息中用来区分不同分区的关键字段，和普通消息的 Key 是完全不同的概念。 适用场景：性能要求高，以 sharding key 作为分区字段，在同一个区块中严格的按照 FIFO 原则进行消息发布和消费的场景。</p>
+</li>
+</ul>
+<h4 id="3-消息过滤"><a href="#3-消息过滤" class="headerlink" title="3 消息过滤"></a>3 消息过滤</h4><p>  RocketMQ的消费者可以根据Tag进行消息过滤，也支持自定义属性过滤。消息过滤目前是在Broker端实现的，优点是减少了对于Consumer无用消息的网络传输，缺点是增加了Broker的负担、而且实现相对复杂。</p>
+<h4 id="4-消息可靠性"><a href="#4-消息可靠性" class="headerlink" title="4 消息可靠性"></a>4 消息可靠性</h4><p>  RocketMQ支持消息的高可靠，影响消息可靠性的几种情况： 1) Broker非正常关闭 2) Broker异常Crash 3) OS Crash 4) 机器掉电，但是能立即恢复供电情况 5) 机器无法开机（可能是cpu、主板、内存等关键设备损坏） 6) 磁盘设备损坏</p>
+<p>1)、2)、3)、4) 四种情况都属于硬件资源可立即恢复情况，RocketMQ在这四种情况下能保证消息不丢，或者丢失少量数据（依赖刷盘方式是同步还是异步）。</p>
+<p>5)、6)属于单点故障，且无法恢复，一旦发生，在此单点上的消息全部丢失。RocketMQ在这两种情况下，通过异步复制，可保证99%的消息不丢，但是仍然会有极少量的消息可能丢失。通过同步双写技术可以完全避免单点，同步双写势必会影响性能，适合对消息可靠性要求极高的场合，例如与Money相关的应用。注：RocketMQ从3.0版本开始支持同步双写。</p>
+<h4 id="5-至少一次"><a href="#5-至少一次" class="headerlink" title="5 至少一次"></a>5 至少一次</h4><p>至少一次(At least Once)指每个消息必须投递一次。Consumer先Pull消息到本地，消费完成后，才向服务器返回ack，如果没有消费一定不会ack消息，所以RocketMQ可以很好的支持此特性。</p>
+<h4 id="6-回溯消费"><a href="#6-回溯消费" class="headerlink" title="6 回溯消费"></a>6 回溯消费</h4><p>回溯消费是指Consumer已经消费成功的消息，由于业务上需求需要重新消费，要支持此功能，Broker在向Consumer投递成功消息后，消息仍然需要保留。并且重新消费一般是按照时间维度，例如由于Consumer系统故障，恢复后需要重新消费1小时前的数据，那么Broker要提供一种机制，可以按照时间维度来回退消费进度。RocketMQ支持按照时间回溯消费，时间维度精确到毫秒。</p>
+<h4 id="7-事务消息"><a href="#7-事务消息" class="headerlink" title="7 事务消息"></a>7 事务消息</h4><p>RocketMQ事务消息（Transactional Message）是指应用本地事务和发送消息操作可以被定义到全局事务中，要么同时成功，要么同时失败。RocketMQ的事务消息提供类似 X/Open XA 的分布事务功能，通过事务消息能达到分布式事务的最终一致。</p>
+<h4 id="8-定时消息"><a href="#8-定时消息" class="headerlink" title="8 定时消息"></a>8 定时消息</h4><p>定时消息（延迟队列）是指消息发送到broker后，不会立即被消费，等待特定时间投递给真正的topic。 broker有配置项messageDelayLevel，默认值为“1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h”，18个level。可以配置自定义messageDelayLevel。注意，messageDelayLevel是broker的属性，不属于某个topic。发消息时，设置delayLevel等级即可：msg.setDelayLevel(level)。level有以下三种情况：</p>
+<ul>
+<li>level == 0，消息为非延迟消息</li>
+<li>1&lt;=level&lt;=maxLevel，消息延迟特定时间，例如level==1，延迟1s</li>
+<li>level &gt; maxLevel，则level== maxLevel，例如level==20，延迟2h</li>
+</ul>
+<p>定时消息会暂存在名为SCHEDULE_TOPIC_XXXX的topic中，并根据delayTimeLevel存入特定的queue，queueId = delayTimeLevel – 1，即一个queue只存相同延迟的消息，保证具有相同发送延迟的消息能够顺序消费。broker会调度地消费SCHEDULE_TOPIC_XXXX，将消息写入真实的topic。</p>
+<p>需要注意的是，定时消息会在第一次写入和调度写入真实topic时都会计数，因此发送数量、tps都会变高。</p>
+<h4 id="9-消息重试"><a href="#9-消息重试" class="headerlink" title="9 消息重试"></a>9 消息重试</h4><p>Consumer消费消息失败后，要提供一种重试机制，令消息再消费一次。Consumer消费消息失败通常可以认为有以下几种情况：</p>
+<ul>
+<li>由于消息本身的原因，例如反序列化失败，消息数据本身无法处理（例如话费充值，当前消息的手机号被注销，无法充值）等。这种错误通常需要跳过这条消息，再消费其它消息，而这条失败的消息即使立刻重试消费，99%也不成功，所以最好提供一种定时重试机制，即过10秒后再重试。</li>
+<li>由于依赖的下游应用服务不可用，例如db连接不可用，外系统网络不可达等。遇到这种错误，即使跳过当前失败的消息，消费其他消息同样也会报错。这种情况建议应用sleep 30s，再消费下一条消息，这样可以减轻Broker重试消息的压力。</li>
+</ul>
+<p>RocketMQ会为每个消费组都设置一个Topic名称为“%RETRY%+consumerGroup”的重试队列（这里需要注意的是，这个Topic的重试队列是针对消费组，而不是针对每个Topic设置的），用于暂时保存因为各种异常而导致Consumer端无法消费的消息。考虑到异常恢复起来需要一些时间，会为重试队列设置多个重试级别，每个重试级别都有与之对应的重新投递延时，重试次数越多投递延时就越大。RocketMQ对于重试消息的处理是先保存至Topic名称为“SCHEDULE_TOPIC_XXXX”的延迟队列中，后台定时任务按照对应的时间进行Delay后重新保存至“%RETRY%+consumerGroup”的重试队列中。</p>
+<h4 id="10-消息重投"><a href="#10-消息重投" class="headerlink" title="10 消息重投"></a>10 消息重投</h4><p>生产者在发送消息时，同步消息失败会重投，异步消息有重试，oneway没有任何保证。消息重投保证消息尽可能发送成功、不丢失，但可能会造成消息重复，消息重复在RocketMQ中是无法避免的问题。消息重复在一般情况下不会发生，当出现消息量大、网络抖动，消息重复就会是大概率事件。另外，生产者主动重发、consumer负载变化也会导致重复消息。如下方法可以设置消息重试策略：</p>
+<ul>
+<li>retryTimesWhenSendFailed:同步发送失败重投次数，默认为2，因此生产者会最多尝试发送retryTimesWhenSendFailed + 1次。不会选择上次失败的broker，尝试向其他broker发送，最大程度保证消息不丢。超过重投次数，抛出异常，由客户端保证消息不丢。当出现RemotingException、MQClientException和部分MQBrokerException时会重投。</li>
+<li>retryTimesWhenSendAsyncFailed:异步发送失败重试次数，异步重试不会选择其他broker，仅在同一个broker上做重试，不保证消息不丢。</li>
+<li>retryAnotherBrokerWhenNotStoreOK:消息刷盘（主或备）超时或slave不可用（返回状态非SEND_OK），是否尝试发送到其他broker，默认false。十分重要消息可以开启。</li>
+</ul>
+<h4 id="11-流量控制"><a href="#11-流量控制" class="headerlink" title="11 流量控制"></a>11 流量控制</h4><p>生产者流控，因为broker处理能力达到瓶颈；消费者流控，因为消费能力达到瓶颈。</p>
+<p>生产者流控：</p>
+<ul>
+<li>commitLog文件被锁时间超过osPageCacheBusyTimeOutMills时，参数默认为1000ms，返回流控。</li>
+<li>如果开启transientStorePoolEnable == true，且broker为异步刷盘的主机，且transientStorePool中资源不足，拒绝当前send请求，返回流控。</li>
+<li>broker每隔10ms检查send请求队列头部请求的等待时间，如果超过waitTimeMillsInSendQueue，默认200ms，拒绝当前send请求，返回流控。</li>
+<li>broker通过拒绝send 请求方式实现流量控制。</li>
+</ul>
+<p>注意，生产者流控，不会尝试消息重投。</p>
+<p>消费者流控：</p>
+<ul>
+<li>消费者本地缓存消息数超过pullThresholdForQueue时，默认1000。</li>
+<li>消费者本地缓存消息大小超过pullThresholdSizeForQueue时，默认100MB。</li>
+<li>消费者本地缓存消息跨度超过consumeConcurrentlyMaxSpan时，默认2000。</li>
+</ul>
+<p>消费者流控的结果是降低拉取频率。</p>
+<h4 id="12-死信队列"><a href="#12-死信队列" class="headerlink" title="12 死信队列"></a>12 死信队列</h4><p>死信队列用于处理无法被正常消费的消息。当一条消息初次消费失败，消息队列会自动进行消息重试；达到最大重试次数后，若消费依然失败，则表明消费者在正常情况下无法正确地消费该消息，此时，消息队列 不会立刻将消息丢弃，而是将其发送到该消费者对应的特殊队列中。</p>
+<p>RocketMQ将这种正常情况下无法被消费的消息称为死信消息（Dead-Letter Message），将存储死信消息的特殊队列称为死信队列（Dead-Letter Queue）。在RocketMQ中，可以通过使用console控制台对死信队列中的消息进行重发来使得消费者实例再次进行消费。</p>
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B%EF%BC%88Message-Model%EF%BC%89"><span class="toc-text">1 消息模型（Message Model）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%B6%88%E6%81%AF%E7%94%9F%E4%BA%A7%E8%80%85%EF%BC%88Producer%EF%BC%89"><span class="toc-text">2 消息生产者（Producer）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%B6%88%E6%81%AF%E6%B6%88%E8%B4%B9%E8%80%85%EF%BC%88Consumer%EF%BC%89"><span class="toc-text">3 消息消费者（Consumer）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E4%B8%BB%E9%A2%98%EF%BC%88Topic%EF%BC%89"><span class="toc-text">4 主题（Topic）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Broker-Server%EF%BC%89"><span class="toc-text">5 代理服务器（Broker Server）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E5%90%8D%E5%AD%97%E6%9C%8D%E5%8A%A1%EF%BC%88Name-Server%EF%BC%89"><span class="toc-text">6 名字服务（Name Server）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-%E6%8B%89%E5%8F%96%E5%BC%8F%E6%B6%88%E8%B4%B9%EF%BC%88Pull-Consumer%EF%BC%89"><span class="toc-text">7 拉取式消费（Pull Consumer）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-%E6%8E%A8%E5%8A%A8%E5%BC%8F%E6%B6%88%E8%B4%B9%EF%BC%88Push-Consumer%EF%BC%89"><span class="toc-text">8 推动式消费（Push Consumer）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-%E7%94%9F%E4%BA%A7%E8%80%85%E7%BB%84%EF%BC%88Producer-Group%EF%BC%89"><span class="toc-text">9 生产者组（Producer Group）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84%EF%BC%88Consumer-Group%EF%BC%89"><span class="toc-text">10 消费者组（Consumer Group）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-%E9%9B%86%E7%BE%A4%E6%B6%88%E8%B4%B9%EF%BC%88Clustering%EF%BC%89"><span class="toc-text">11 集群消费（Clustering）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-%E5%B9%BF%E6%92%AD%E6%B6%88%E8%B4%B9%EF%BC%88Broadcasting%EF%BC%89"><span class="toc-text">12 广播消费（Broadcasting）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E6%99%AE%E9%80%9A%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%EF%BC%88Normal-Ordered-Message%EF%BC%89"><span class="toc-text">13 普通顺序消息（Normal Ordered Message）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-%E4%B8%A5%E6%A0%BC%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%EF%BC%88Strictly-Ordered-Message%EF%BC%89"><span class="toc-text">14 严格顺序消息（Strictly Ordered Message）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15-%E6%B6%88%E6%81%AF%EF%BC%88Message%EF%BC%89"><span class="toc-text">15 消息（Message）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16-%E6%A0%87%E7%AD%BE%EF%BC%88Tag%EF%BC%89"><span class="toc-text">16 标签（Tag）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E6%80%A7-features"><span class="toc-text">特性(features)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%AE%A2%E9%98%85%E4%B8%8E%E5%8F%91%E5%B8%83"><span class="toc-text">1 订阅与发布</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%B6%88%E6%81%AF%E9%A1%BA%E5%BA%8F"><span class="toc-text">2 消息顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%B6%88%E6%81%AF%E8%BF%87%E6%BB%A4"><span class="toc-text">3 消息过滤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="toc-text">4 消息可靠性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E8%87%B3%E5%B0%91%E4%B8%80%E6%AC%A1"><span class="toc-text">5 至少一次</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E5%9B%9E%E6%BA%AF%E6%B6%88%E8%B4%B9"><span class="toc-text">6 回溯消费</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF"><span class="toc-text">7 事务消息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-%E5%AE%9A%E6%97%B6%E6%B6%88%E6%81%AF"><span class="toc-text">8 定时消息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-%E6%B6%88%E6%81%AF%E9%87%8D%E8%AF%95"><span class="toc-text">9 消息重试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-%E6%B6%88%E6%81%AF%E9%87%8D%E6%8A%95"><span class="toc-text">10 消息重投</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="toc-text">11 流量控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-%E6%AD%BB%E4%BF%A1%E9%98%9F%E5%88%97"><span class="toc-text">12 死信队列</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://alexhuihui.github.io/article/20220107.html">https://alexhuihui.github.io/article/20220107.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RocketMq/" rel="tag">RocketMq</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/article/20220117.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          【MySQL】MySQL boolean类型
+        
+      </div>
+    </a>
+  
+  
+    <a href="/article/20220106.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">【Redis】基于redisson搭建延迟队列</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/article/20250125.html">【DNS】DNS的架构</a>
+          </li>
+        
+          <li>
+            <a href="/article/20250113.html">使用 cloudflare tunnel</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240525.html">【Spring】缓存注解@Cacheable、@CacheEvict、@CachePut使用</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240522.html">【MySQL】索引失效的场景</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240430.html">【Docker】容器的本质</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AES/" style="font-size: 10px;">AES</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/Docker/" style="font-size: 15px;">Docker</a> <a href="/tags/ELK/" style="font-size: 10px;">ELK</a> <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/Go/" style="font-size: 20px;">Go</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/JWT/" style="font-size: 15px;">JWT</a> <a href="/tags/Kafka/" style="font-size: 15px;">Kafka</a> <a href="/tags/Kubernetes/" style="font-size: 15px;">Kubernetes</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/MD5/" style="font-size: 10px;">MD5</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 15px;">Mybatis</a> <a href="/tags/RSA/" style="font-size: 10px;">RSA</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/RocketMq/" style="font-size: 10px;">RocketMq</a> <a href="/tags/Spring/" style="font-size: 10px;">Spring</a> <a href="/tags/ZooKeeper/" style="font-size: 10px;">ZooKeeper</a> <a href="/tags/anki/" style="font-size: 10px;">anki</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/cloudflare/" style="font-size: 10px;">cloudflare</a> <a href="/tags/gRPC/" style="font-size: 10px;">gRPC</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/genanki/" style="font-size: 10px;">genanki</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/minikube/" style="font-size: 10px;">minikube</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/oauth2/" style="font-size: 15px;">oauth2</a> <a href="/tags/pyicloud/" style="font-size: 10px;">pyicloud</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/spring-authorization-server/" style="font-size: 15px;">spring-authorization-server</a> <a href="/tags/tunnel/" style="font-size: 10px;">tunnel</a> <a href="/tags/%E4%BA%8B%E5%8A%A1/" style="font-size: 10px;">事务</a> <a href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" style="font-size: 10px;">事务处理</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">并发</a> <a href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" style="font-size: 10px;">延时队列</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" style="font-size: 10px;">微信机器人</a> <a href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" style="font-size: 15px;">技术分享</a> <a href="/tags/%E6%8E%88%E6%9D%83/" style="font-size: 10px;">授权</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E7%AD%BE%E5%90%8D/" style="font-size: 15px;">签名</a> <a href="/tags/%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">设计</a> <a href="/tags/%E9%87%8D%E6%9E%84/" style="font-size: 10px;">重构</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DNS/">DNS</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ELK/">ELK</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/">Go语言学习</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2%E6%8A%98%E8%85%BE/">Hexo博客折腾</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kubernetes/">Kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LLM/">LLM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maven/">Maven</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/RocketMq/">RocketMq</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/cloudflare/">cloudflare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gRPC/">gRPC</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/spring-authorization-server/">spring-authorization-server</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AA%E4%BA%BA%E9%A1%B9%E7%9B%AE/">个人项目</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1/">事务</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/">事务处理</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B9%B6%E5%8F%91/">并发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/">微信机器人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">技术分享</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%8D%E6%9E%84/">重构</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025年01月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024年05月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023年12月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年12月</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AES/" rel="tag">AES</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/" rel="tag">ELK</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JWT/" rel="tag">JWT</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/" rel="tag">Kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MD5/" rel="tag">MD5</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSA/" rel="tag">RSA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RocketMq/" rel="tag">RocketMq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anki/" rel="tag">anki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/" rel="tag">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudflare/" rel="tag">cloudflare</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gRPC/" rel="tag">gRPC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gcc/" rel="tag">gcc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/genanki/" rel="tag">genanki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minikube/" rel="tag">minikube</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/" rel="tag">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth2/" rel="tag">oauth2</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pyicloud/" rel="tag">pyicloud</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-authorization-server/" rel="tag">spring-authorization-server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tunnel/" rel="tag">tunnel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1/" rel="tag">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" rel="tag">事务处理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" rel="tag">延时队列</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" rel="tag">微信机器人</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" rel="tag">技术分享</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%88%E6%9D%83/" rel="tag">授权</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E7%BB%84/" rel="tag">数组</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88/" rel="tag">栈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%BE%E5%90%8D/" rel="tag">签名</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1/" rel="tag">设计</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E6%9E%84/" rel="tag">重构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%9F%E5%88%97/" rel="tag">队列</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example1.com/">site-name1</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example2.com/">site-name2</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example3.com/">site-name3</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>
+          ，
+          <i class="fa fa-views"></i>
+          <i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2025 汪永晖.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        
+            <span>Count by <a href="http://busuanzi.ibruce.info/" target="_blank">busuanzi.</a></span>
+        
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+  
+<script src="/localshare/js/social-share.js"></script>
+
+  
+<script src="/localshare/js/qrcode.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>

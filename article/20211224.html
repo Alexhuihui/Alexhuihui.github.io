@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>【安全】JWT介绍和使用 | 秋过冬漫长</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <meta name="description" content="java">
+  
+  
+    <meta name="keywords" content="技术博客">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="秋过冬漫长" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">秋过冬漫长</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有比脚更长的路，走过去，前面是个天！</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-【安全】JWT介绍和使用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      【安全】JWT介绍和使用
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-12-24T03:11:49.000Z" itemprop="datePublished">2021年12月24日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/article/20211224.html#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="Why-use-it"><a href="#Why-use-it" class="headerlink" title="Why use it?"></a>Why use it?</h3><blockquote>
+<p>JWT可以存储用户基本信息，常用于微服务中对请求的鉴权。</p>
+<p>JWT是无状态的，方便后端服务的水平扩展</p>
+</blockquote>
+<span id="more"></span> 
+
+<h3 id="一、JWT的构成"><a href="#一、JWT的构成" class="headerlink" title="一、JWT的构成"></a>一、JWT的构成</h3><p>一共三部分，第一部分我们称它为头部（header),第二部分我们称其为载荷（payload)，第三部分是签名（signature).</p>
+<h4 id="1-header"><a href="#1-header" class="headerlink" title="1.header"></a>1.header</h4><p>jwt的头部承载两部分信息：</p>
+<ul>
+<li>声明类型，这里是jwt</li>
+<li>声明加密的算法 通常直接使用 HMAC SHA256</li>
+</ul>
+<p>完整的头部就像下面这样的JSON：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &#x27;typ&#x27;: &#x27;JWT&#x27;,</span><br><span class="line">  &#x27;alg&#x27;: &#x27;HS256&#x27;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后将头部进行base64编码，构成了第一部分.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-payload"><a href="#2-payload" class="headerlink" title="2.payload"></a>2.payload</h4><p>载荷就是存放有效信息的地方。这个名字像是特指飞机上承载的货品，这些有效信息包含三个部分</p>
+<ul>
+<li>标准中注册的声明</li>
+<li>公共的声明</li>
+<li>私有的声明</li>
+</ul>
+<p><strong>标准中注册的声明</strong> (建议但不强制使用) ：</p>
+<ul>
+<li><strong>iss</strong>: jwt签发者</li>
+<li><strong>sub</strong>: jwt所面向的用户</li>
+<li><strong>aud</strong>: 接收jwt的一方</li>
+<li><strong>exp</strong>: jwt的过期时间，这个过期时间必须要大于签发时间</li>
+<li><strong>nbf</strong>: 定义在什么时间之前，该jwt都是不可用的</li>
+<li><strong>iat</strong>: jwt的签发时间</li>
+<li><strong>jti</strong>: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击</li>
+</ul>
+<p><strong>公共的声明</strong> ：<br> 公共的声明可以添加任何的信息，一般添加用户的相关信息或其他业务需要的必要信息.但不建议添加敏感信息，因为该部分在客户端可解密。</p>
+<p><strong>私有的声明</strong> ：<br> 私有声明是提供者和消费者所共同定义的声明，一般不建议存放敏感信息，因为base64只是进行编码，意味着该部分信息可以归类为明文信息。</p>
+<p>定义一个payload:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;sub&quot;</span>: <span class="string">&quot;1234567890&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;John Doe&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;admin&quot;</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后将其进行base64加密，得到JWT的第二部分。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-signature"><a href="#3-signature" class="headerlink" title="3.signature"></a>3.signature</h4><p>签名可以校验payload里面的信息是否被篡改，它由编码过后的header和payload采用header里声明的算法使用secret key进行加密。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">signature = Crypto(secret, base64(header), base64(payload))</span><br></pre></td></tr></table></figure>
+
+<p>下面是个签名示例</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jbcOUQ2bbiYlfVtprEkaT_S6Y6yQnBDOAKDHIHjvl7g</span><br></pre></td></tr></table></figure>
+
+<p>如果你感兴趣，可以拷贝下面的JWT去<a target="_blank" rel="noopener" href="https://jwt.io/">https://jwt.io</a>进行解密.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxZGZlZThkOC05OGE1LTQzMTQtYjRhZS1mYjU1YzRiMTg4NDUiLCJlbWFpbCI6ImFyaWVsQGNvZGluZ2x5LmlvIiwibmFtZSI6IkFyaWVsIFdlaW5iZXJnZXIiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTU5ODYwODg0OCwiZXhwIjoxNTk4NjA5MTQ4fQ.oa3ziIZAoVFdn<span class="number">-97</span>rweJAjjFn6a4ZSw7ogIHA74mGq0</span><br></pre></td></tr></table></figure>
+
+<p>既然JWT不能对信息加密，那它是如何防止信息被篡改的呢？比如我把角色改为Admin。服务端对JWT进行校验的时候会 对header和payload再次使用secret key加密，和传进来的JWT第三部分进行比较，如果不匹配则JWT不合法。</p>
+<h3 id="二、常见的误解、问题和技巧"><a href="#二、常见的误解、问题和技巧" class="headerlink" title="二、常见的误解、问题和技巧"></a>二、常见的误解、问题和技巧</h3><h4 id="1-短暂的有效期和主动失效"><a href="#1-短暂的有效期和主动失效" class="headerlink" title="1.短暂的有效期和主动失效"></a>1.短暂的有效期和主动失效</h4><p>有效期较短的token是被高度推荐的，一些服务的token过期时间为5分钟在发布它们之后。</p>
+<p>在token过期之后，auth server将会颁发一个包含最新的身份信息的access token，这个过程被叫做 token refresh。举个例子，如果用户角色从 Admin 变更为 User，拥有较短的生命周期的token可以保证用户的token包含最近的用户角色.</p>
+<p>综上所述，较短的有效期的token有以下两个好处:</p>
+<ul>
+<li>如果你的token被盗取，攻击者使用你的token的有效时间窗口将会很短</li>
+<li>JWT是无状态的，服务端无法主动令其失效，因此，较短的生命周期可以让我们在用户权限和角色方面保证强大的一致性</li>
+</ul>
+<h4 id="2-Refresh-Token"><a href="#2-Refresh-Token" class="headerlink" title="2.Refresh Token"></a>2.Refresh Token</h4><p>接上文，Refresh Token在很多使用JWT的系统的是必须要用的。</p>
+<p>它的使用很简单，在最初authentication success的时候，给用户颁发两个token</p>
+<ul>
+<li>Access Token : 每个请求必须携带的JSON Web Token ，包含用户声明的信息</li>
+<li>Refresh Token : 这个特殊类型的token是被持久化保存在数据库中的，被Auth Server所持有。它经常不是JWT，而是一个独一无二的hash值。</li>
+</ul>
+<p>我们已经知道，Access Token会携带在每个请求中并会在某个时间节点失效。然后前端将会发送一个Refresh请求并携带 Refresh Token。Auth Server将会生成一个新的Access Token返回给用户，用户使用这个token直到它过期，然后再刷新一遍，Over and over。</p>
+<p>Refresh Token的有效期一般会长达数月，当它失效后，用户必须重新登录。</p>
+<h4 id="3-Secret-VS-Private-Public-Key"><a href="#3-Secret-VS-Private-Public-Key" class="headerlink" title="3.Secret VS Private-Public Key"></a>3.Secret VS Private-Public Key</h4><p>流行的 HS256 签名算法的缺点是在生成和验证的时候都需要访问密钥。对于单一程序而言，这不是一个问题，但如果你有一个由多个服务构建的分布式系统，彼此独立运行，你必须在两个糟糕的选择之间进行选择：</p>
+<ul>
+<li>你可以选择使用专用服务进行 token 的生成和验证。从客户端接收 token 的任何服务，都需要调用身份验证服务来验证 token。对于繁忙的系统来说，这会在身份验证服务上产生性能问题。</li>
+<li>你可以为所有需要从客户端接收 token 的服务配置密钥，以便它们可以验证 token，无需调用身份验证服务。但是，在多个地方使用密钥会增加其受到攻击的风险，并且一旦受到攻击，攻击者就可以生成有效 token 并模拟系统中的任何用户。</li>
+</ul>
+<p>因此对于这些程序，最好将签名密钥安全存储在身份验证服务中，并且仅用于生成密钥，而其他所有服务无需访问密钥就可以验证这些 token。实际上，这可以通过公钥加密来实现。</p>
+<p>公钥加密基于两个组件的加密密钥：一个公钥和一个私钥。在命名实现时，公钥组件可以自由共享。可以使用公钥加密来完成两个工作流程：</p>
+<ul>
+<li>消息加密：如果你想要向某人发送加密消息，我可以使用他的公钥来加密。加密的消息只能用他的私钥来解密。</li>
+<li>消息签名：如果我想要签署一条消息它来自我，我可以使用自己的私钥来生成签名。任何对验证消息感兴趣的人，都可以使用我的公钥来确认签名是否有效。</li>
+</ul>
+<p>JWT 的签名算法实现了上面的第二种情况。使用服务器的私钥对 token 进行签名，然后任何使用服务器公钥的人都可以验证它们，任何想要拥有它的人都可以免费使用。举个例子来说下面，我使用 <code>RS256</code> 签名算法，它是 RSA-SHA256 的简写。</p>
+<p>下一步是为程序生成公钥/私钥集 (通常称为 “秘钥对”)。生成 RSA 密钥有几种不同的方法，但我喜欢使用 openssh 中的 ssh-keygen 工具：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -b 4096</span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/home/miguel/.ssh/id_rsa): jwt-key</span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase):</span><br><span class="line">Enter same passphrase again:</span><br><span class="line">Your identification has been saved <span class="keyword">in</span> jwt-key.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> jwt-key.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:ZER3ddV4/smE0rnoNesS+IwCNSbwu5SThfiWWtLYRVM miguel@MS90J8G8WL</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string">+---[RSA 4096]----+</span></span><br><span class="line"><span class="string">|       .+E. ....=|</span></span><br><span class="line"><span class="string">|   .   + . .  ..o|</span></span><br><span class="line"><span class="string">|    + o +   . oo |</span></span><br><span class="line"><span class="string">|   . + O   . + ..|</span></span><br><span class="line"><span class="string">|    = @ S . o + o|</span></span><br><span class="line"><span class="string">|   o #   . o + o.|</span></span><br><span class="line"><span class="string">|    * +   = o o  |</span></span><br><span class="line"><span class="string">|   . . . . = .   |</span></span><br><span class="line"><span class="string">|        .   o.   |</span></span><br><span class="line"><span class="string">+----[SHA256]-----+</span></span><br></pre></td></tr></table></figure>
+
+<p><code>ssh-keygen</code> 命令的 -t 选项定义了，我正在请求的秘钥对，-b 选项指定密钥大小为 4096 位，这被认为是一个非常安全的密钥长度。当你运行该命令时，系统提示你需要为秘钥对提供文件名，这里我在当前路径下使用 <code>jwt-key</code> 。然后，系统将提示你输入密码来保护密钥，密钥需要保留为空。</p>
+<p>当运行完命令，你会在当前目录下获得两个文件，<code>jwt-key</code> 和 <code>jwt-key.pub</code>。前者是私钥，将用于生成 token 签名，因此你需要保存好它。特别是，你不应该将私钥提交到代码仓库，而应直接在服务器上安装 (如果你需要重建服务器，则应做好备份)。.pub 文件用于验证 token。由于此文件没有敏感信息，因此你可以在需要验证 token 的任何项目上随意添加该文件的副本。</p>
+<p>使用此秘钥对生成 token 的过程与我之前的内容非常相似。我们先使用私钥创建一个新的 token:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jwt</span><br><span class="line">private_key = <span class="built_in">open</span>(<span class="string">&#x27;jwt-key&#x27;</span>).read()</span><br><span class="line">token = jwt.encode(&#123;<span class="string">&#x27;user_id&#x27;</span>: <span class="number">123</span>&#125;, private_key, algorithm=<span class="string">&#x27;RS256&#x27;</span>).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(token)</span><br></pre></td></tr></table></figure>
+
+<p>然后再使用公钥来验证：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jwt</span><br><span class="line">public_key = <span class="built_in">open</span>(<span class="string">&#x27;jwt-key.pub&#x27;</span>).read()</span><br><span class="line">token = <span class="string">&#x27;eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VyX2lkIjoxMjN9.HT1kBSdGFAznrhbs2hB6xjVDilMUmKA-_36n1pLLtFTKHoO1qmRkUcy9bJJwGuyfJ_dbzBMyBwpXMj-EXnKQQmKlXsiItxzLVIfC5qE97V6l6S0LzT9bzixvgolwi-qB9STp0bR_7suiXaON-EzBWFh0PzZi7l5Tg8iS_0_iSCQQlX5MSJW_-bHESTf3dfj5GGbsRBRsi1TRBzvxMUB6GhNsy6rdUhwoTkihk7pljISTYs6BtNoGRW9gVUzfA2es3zwBaynyyMeSocYet6WJri97p0eRnVGtHSWwAmnzZ-CX5-scO9uYmb1fT1EkhhjGhnMejee-kQkMktCTNlPsaUAJyayzdgEvQeo5M9ZrfjEnDjF7ntI03dck1t9Bgy-tV1LKH0FWNLq3dCJJrYdQx--A-I7zW1th0C4wNcDe_d_GaYopbtU-HPRG3Z1SPKFuX1m0uYhk9aySvkec66NBfvV2xEgo8lRZyNxntXkMdeJCEiLF1UhQvvSvmWaWC-0uRulYACn4H-tZiaK7zvpcPkrsfJ7iR_O1bxMPziKpsM4b7c7tmsEcOUZY-IHEI9ibd54_A1O72i08sCWKT5CXyG70MAPqyR0MFlcV7IuDtBW3LCqyvfsDVk4eIj8VcSU1OKQJ1Gl-CTOHEyN-ncV3NslVLaT9Q1C4E7uK2QpS8z0&#x27;</span></span><br><span class="line">payload = jwt.decode(token, public_key, algorithms=[<span class="string">&#x27;RS256&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(payload)</span><br></pre></td></tr></table></figure>
+
+<p>如果你感兴趣可以使用我的公钥来验证：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public_key = <span class="string">&#x27;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDKQ43JBiv6FwtMpq6hStz59tSUo8mEU2SwQSg6mGmm4RBZ7uudRSnSwcvGSv45J1rKx1GUSuGYs/To4Ehsney1utN3jUY0XPhSUgxgCIFz66R9eAu92pykWBcSF96mj753LsyBStqq1nCu1D0dEJOBQnz9J2Zzs0N71ZabEvb6hXE8e119j2LFEUQWfM+3+AzrgsVXsTFE8y3LKeWohzQRAY3cAsdPPKI2ayHtlW6DoQ9LLqnsj4YkCe0hDIP/unTyx5OijbD6r8AeAyY4EGIL3c3jYhla6pclSqyLyq7kI0lUAQq4IXS4DYdqNHX01fI57tZeim0+nM3/9H1vJC2EPCDZDRdC2reJ4go/AssyQGamlmlu21Xt3n7rthYWg1u6Y/wpabDBEQcoXJPrBwyuGK8VRQrUU16GMahSiTpHxwvKHBMVyghLPaC8SBf9/edJDxBIq9s2wpnNBdD8TohqAXQILnJt5QBbiG2L/3uMqrEg+udWURBOcVok9TnS6RTtvezM1dSlcYoNMhGYNLMKgBByMOM/bMqJg8udqWqPW2/i/eCNPTLRPqZR7Kdo/GGcMY9pSsDvbzM/IHdeV1JhTyRcSi0xJDCs2M3hmWLg1rJNf7wQZKISIXefIItrABRoF1MuKOsk2CgPnZJgjVhzjzSP7EmyzRAv0E8gCeCtDQ== root@VM-20-3-centos&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>推荐大家采用 RS256 非对称加密算法来生成和验证JWT Token，token的有效期要短一点，并且要有Refresh Token机制。</p>
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Why-use-it"><span class="toc-text">Why use it?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81JWT%E7%9A%84%E6%9E%84%E6%88%90"><span class="toc-text">一、JWT的构成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-header"><span class="toc-text">1.header</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-payload"><span class="toc-text">2.payload</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-signature"><span class="toc-text">3.signature</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E8%A7%A3%E3%80%81%E9%97%AE%E9%A2%98%E5%92%8C%E6%8A%80%E5%B7%A7"><span class="toc-text">二、常见的误解、问题和技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%9F%AD%E6%9A%82%E7%9A%84%E6%9C%89%E6%95%88%E6%9C%9F%E5%92%8C%E4%B8%BB%E5%8A%A8%E5%A4%B1%E6%95%88"><span class="toc-text">1.短暂的有效期和主动失效</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Refresh-Token"><span class="toc-text">2.Refresh Token</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Secret-VS-Private-Public-Key"><span class="toc-text">3.Secret VS Private-Public Key</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://alexhuihui.github.io/article/20211224.html">https://alexhuihui.github.io/article/20211224.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JWT/" rel="tag">JWT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AD%BE%E5%90%8D/" rel="tag">签名</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/article/20211225.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          【安全】Java如何使用JWT
+        
+      </div>
+    </a>
+  
+  
+    <a href="/article/20211223.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">【安全】基本加密解密算法介绍</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/article/20250125.html">【DNS】DNS的架构</a>
+          </li>
+        
+          <li>
+            <a href="/article/20250113.html">使用 cloudflare tunnel</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240525.html">【Spring】缓存注解@Cacheable、@CacheEvict、@CachePut使用</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240522.html">【MySQL】索引失效的场景</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240430.html">【Docker】容器的本质</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AES/" style="font-size: 10px;">AES</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/Docker/" style="font-size: 15px;">Docker</a> <a href="/tags/ELK/" style="font-size: 10px;">ELK</a> <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/Go/" style="font-size: 20px;">Go</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/JWT/" style="font-size: 15px;">JWT</a> <a href="/tags/Kafka/" style="font-size: 15px;">Kafka</a> <a href="/tags/Kubernetes/" style="font-size: 15px;">Kubernetes</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/MD5/" style="font-size: 10px;">MD5</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 15px;">Mybatis</a> <a href="/tags/RSA/" style="font-size: 10px;">RSA</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/RocketMq/" style="font-size: 10px;">RocketMq</a> <a href="/tags/Spring/" style="font-size: 10px;">Spring</a> <a href="/tags/ZooKeeper/" style="font-size: 10px;">ZooKeeper</a> <a href="/tags/anki/" style="font-size: 10px;">anki</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/cloudflare/" style="font-size: 10px;">cloudflare</a> <a href="/tags/gRPC/" style="font-size: 10px;">gRPC</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/genanki/" style="font-size: 10px;">genanki</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/minikube/" style="font-size: 10px;">minikube</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/oauth2/" style="font-size: 15px;">oauth2</a> <a href="/tags/pyicloud/" style="font-size: 10px;">pyicloud</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/spring-authorization-server/" style="font-size: 15px;">spring-authorization-server</a> <a href="/tags/tunnel/" style="font-size: 10px;">tunnel</a> <a href="/tags/%E4%BA%8B%E5%8A%A1/" style="font-size: 10px;">事务</a> <a href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" style="font-size: 10px;">事务处理</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">并发</a> <a href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" style="font-size: 10px;">延时队列</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" style="font-size: 10px;">微信机器人</a> <a href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" style="font-size: 15px;">技术分享</a> <a href="/tags/%E6%8E%88%E6%9D%83/" style="font-size: 10px;">授权</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E7%AD%BE%E5%90%8D/" style="font-size: 15px;">签名</a> <a href="/tags/%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">设计</a> <a href="/tags/%E9%87%8D%E6%9E%84/" style="font-size: 10px;">重构</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DNS/">DNS</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ELK/">ELK</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/">Go语言学习</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2%E6%8A%98%E8%85%BE/">Hexo博客折腾</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kubernetes/">Kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LLM/">LLM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maven/">Maven</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/RocketMq/">RocketMq</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/cloudflare/">cloudflare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gRPC/">gRPC</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/spring-authorization-server/">spring-authorization-server</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AA%E4%BA%BA%E9%A1%B9%E7%9B%AE/">个人项目</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1/">事务</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/">事务处理</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B9%B6%E5%8F%91/">并发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/">微信机器人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">技术分享</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%8D%E6%9E%84/">重构</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025年01月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024年05月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023年12月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年12月</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AES/" rel="tag">AES</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/" rel="tag">ELK</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JWT/" rel="tag">JWT</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/" rel="tag">Kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MD5/" rel="tag">MD5</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSA/" rel="tag">RSA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RocketMq/" rel="tag">RocketMq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anki/" rel="tag">anki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/" rel="tag">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudflare/" rel="tag">cloudflare</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gRPC/" rel="tag">gRPC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gcc/" rel="tag">gcc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/genanki/" rel="tag">genanki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minikube/" rel="tag">minikube</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/" rel="tag">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth2/" rel="tag">oauth2</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pyicloud/" rel="tag">pyicloud</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-authorization-server/" rel="tag">spring-authorization-server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tunnel/" rel="tag">tunnel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1/" rel="tag">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" rel="tag">事务处理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" rel="tag">延时队列</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" rel="tag">微信机器人</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" rel="tag">技术分享</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%88%E6%9D%83/" rel="tag">授权</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E7%BB%84/" rel="tag">数组</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88/" rel="tag">栈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%BE%E5%90%8D/" rel="tag">签名</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1/" rel="tag">设计</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E6%9E%84/" rel="tag">重构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%9F%E5%88%97/" rel="tag">队列</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example1.com/">site-name1</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example2.com/">site-name2</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example3.com/">site-name3</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>
+          ，
+          <i class="fa fa-views"></i>
+          <i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2025 汪永晖.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        
+            <span>Count by <a href="http://busuanzi.ibruce.info/" target="_blank">busuanzi.</a></span>
+        
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+  
+<script src="/localshare/js/social-share.js"></script>
+
+  
+<script src="/localshare/js/qrcode.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>

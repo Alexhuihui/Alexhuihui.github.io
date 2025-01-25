@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>【Spring】缓存注解@Cacheable、@CacheEvict、@CachePut使用 | 秋过冬漫长</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <meta name="description" content="java">
+  
+  
+    <meta name="keywords" content="技术博客">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="秋过冬漫长" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">秋过冬漫长</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有比脚更长的路，走过去，前面是个天！</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-【Spring】缓存注解@Cacheable、@CacheEvict、@CachePut使用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      【Spring】缓存注解@Cacheable、@CacheEvict、@CachePut使用
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2024-05-25T11:54:06.000Z" itemprop="datePublished">2024年05月25日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/article/20240525.html#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Spring Cache 通过封装统一的缓存抽象层，支持多种缓存实现（如Ehcache、Redis、Caffeine等）。可以使用注解@Cacheable、@CacheEvict、@CachePut等优雅的进行使用，无需修改业务代码。</p>
+<span id="more"></span> 
+
+<h3 id="Cacheable"><a href="#Cacheable" class="headerlink" title="@Cacheable"></a>@Cacheable</h3><p><code>@Cacheable</code>注解用于在方法执行前检查缓存，如果缓存中有数据则返回缓存中的数据，否则执行方法并将结果缓存。</p>
+<p><strong>工作原理</strong>：</p>
+<ol>
+<li><strong>方法调用前</strong>：<ul>
+<li>AOP代理拦截方法调用。</li>
+<li>从指定的缓存区（<code>value</code>属性指定）中根据缓存键（<code>key</code>属性指定）查找缓存条目。</li>
+<li>如果找到缓存条目，则返回缓存的值，不执行目标方法。</li>
+</ul>
+</li>
+<li><strong>方法调用后</strong>：<ul>
+<li>如果缓存中没有找到条目，则执行目标方法。</li>
+<li>将方法返回值存储到缓存中，使用指定的缓存区和缓存键。</li>
+</ul>
+</li>
+</ol>
+<p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Cacheable(value = &quot;users&quot;, key = &quot;#userId&quot;)</span><br><span class="line">public User getUserById(Long userId) &#123;</span><br><span class="line">    return userRepository.findById(userId).orElse(null);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="CacheEvict"><a href="#CacheEvict" class="headerlink" title="@CacheEvict"></a>@CacheEvict</h3><p><code>@CacheEvict</code>注解用于从缓存中移除一个或多个条目，通常在数据修改或删除操作时使用。</p>
+<p><strong>工作原理</strong>：</p>
+<ol>
+<li><p>方法调用后</p>
+<p>：</p>
+<ul>
+<li>AOP代理拦截方法调用。</li>
+<li>执行目标方法。</li>
+<li>从指定的缓存区（<code>value</code>属性指定）中根据缓存键（<code>key</code>属性指定）移除缓存条目。</li>
+<li>如果设置了<code>allEntries = true</code>，则清空整个缓存区。</li>
+</ul>
+</li>
+</ol>
+<p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@CacheEvict(value = &quot;users&quot;, key = &quot;#userId&quot;)</span><br><span class="line">public void deleteUserById(Long userId) &#123;</span><br><span class="line">    userRepository.deleteById(userId);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="CachePut"><a href="#CachePut" class="headerlink" title="@CachePut"></a>@CachePut</h3><p><code>@CachePut</code>注解用于在方法执行后将结果更新到缓存中。与<code>@Cacheable</code>不同，它总是会执行目标方法。</p>
+<p><strong>工作原理</strong>：</p>
+<ol>
+<li><p>方法调用后</p>
+<p>：</p>
+<ul>
+<li>AOP代理拦截方法调用。</li>
+<li>执行目标方法。</li>
+<li>将方法返回值存储到缓存中，使用指定的缓存区（<code>value</code>属性指定）和缓存键（<code>key</code>属性指定）。</li>
+</ul>
+</li>
+</ol>
+<p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@CachePut(value = &quot;users&quot;, key = &quot;#user.id&quot;)</span><br><span class="line">public User updateUser(User user) &#123;</span><br><span class="line">    return userRepository.save(user);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>@CacheConfig</code>注解用于在类级别配置缓存的公共设置，简化方法级别的缓存配置。如果类中的多个方法共享相同的缓存配置（例如相同的缓存名称），使用<code>@CacheConfig</code>可以避免在每个方法上重复配置。</p>
+<h3 id="CacheConfig的作用"><a href="#CacheConfig的作用" class="headerlink" title="@CacheConfig的作用"></a>@CacheConfig的作用</h3><ul>
+<li><strong>缓存名称</strong>：设置默认的缓存名称，应用于该类中的所有缓存操作。</li>
+<li><strong>缓存管理器</strong>：指定默认的缓存管理器，应用于该类中的所有缓存操作。</li>
+</ul>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>假设我们有一个<code>UserService</code>类，其中多个方法需要使用相同的缓存配置。</p>
+<h4 id="不使用-CacheConfig"><a href="#不使用-CacheConfig" class="headerlink" title="不使用@CacheConfig"></a>不使用@CacheConfig</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">import org.springframework.cache.annotation.Cacheable;</span><br><span class="line">import org.springframework.cache.annotation.CacheEvict;</span><br><span class="line">import org.springframework.cache.annotation.CachePut;</span><br><span class="line">import org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line">@Service</span><br><span class="line">public class UserService &#123;</span><br><span class="line"></span><br><span class="line">    @Cacheable(value = &quot;users&quot;, key = &quot;#userId&quot;)</span><br><span class="line">    public User getUserById(Long userId) &#123;</span><br><span class="line">        return userRepository.findById(userId).orElse(null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @CacheEvict(value = &quot;users&quot;, key = &quot;#userId&quot;)</span><br><span class="line">    public void deleteUserById(Long userId) &#123;</span><br><span class="line">        userRepository.deleteById(userId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @CachePut(value = &quot;users&quot;, key = &quot;#user.id&quot;)</span><br><span class="line">    public User updateUser(User user) &#123;</span><br><span class="line">        return userRepository.save(user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，每个缓存注解都需要指定<code>value = &quot;users&quot;</code>，如果有多个方法共享相同的缓存名称，这样会显得冗余。</p>
+<h4 id="使用-CacheConfig"><a href="#使用-CacheConfig" class="headerlink" title="使用@CacheConfig"></a>使用@CacheConfig</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import org.springframework.cache.annotation.CacheConfig;</span><br><span class="line">import org.springframework.cache.annotation.Cacheable;</span><br><span class="line">import org.springframework.cache.annotation.CacheEvict;</span><br><span class="line">import org.springframework.cache.annotation.CachePut;</span><br><span class="line">import org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line">@Service</span><br><span class="line">@CacheConfig(cacheNames = &quot;users&quot;)</span><br><span class="line">public class UserService &#123;</span><br><span class="line"></span><br><span class="line">    @Cacheable(key = &quot;#userId&quot;)</span><br><span class="line">    public User getUserById(Long userId) &#123;</span><br><span class="line">        return userRepository.findById(userId).orElse(null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @CacheEvict(key = &quot;#userId&quot;)</span><br><span class="line">    public void deleteUserById(Long userId) &#123;</span><br><span class="line">        userRepository.deleteById(userId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @CachePut(key = &quot;#user.id&quot;)</span><br><span class="line">    public User updateUser(User user) &#123;</span><br><span class="line">        return userRepository.save(user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中：</p>
+<ul>
+<li><code>@CacheConfig(cacheNames = &quot;users&quot;)</code>：在类级别配置默认的缓存名称为“users”。</li>
+<li>各个方法上不再需要重复指定缓存名称，只需要配置<code>key</code>属性。</li>
+</ul>
+<h3 id="CacheConfig-的使用场景"><a href="#CacheConfig-的使用场景" class="headerlink" title="@CacheConfig 的使用场景"></a>@CacheConfig 的使用场景</h3><ul>
+<li><strong>统一缓存配置</strong>：当一个类中多个方法使用相同的缓存名称或缓存管理器时，可以通过<code>@CacheConfig</code>统一配置，减少代码冗余。</li>
+<li><strong>简化配置</strong>：避免在每个方法的缓存注解中重复指定相同的缓存名称或其他配置。</li>
+</ul>
+<h3 id="进一步示例"><a href="#进一步示例" class="headerlink" title="进一步示例"></a>进一步示例</h3><p>假设我们在同一个类中使用多个缓存名称，可以通过<code>@CacheConfig</code>配置默认的缓存名称，同时在特定方法上覆盖默认配置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">import org.springframework.cache.annotation.CacheConfig;</span><br><span class="line">import org.springframework.cache.annotation.Cacheable;</span><br><span class="line">import org.springframework.cache.annotation.CacheEvict;</span><br><span class="line">import org.springframework.cache.annotation.CachePut;</span><br><span class="line">import org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line">@Service</span><br><span class="line">@CacheConfig(cacheNames = &quot;users&quot;)</span><br><span class="line">public class UserService &#123;</span><br><span class="line"></span><br><span class="line">    @Cacheable(key = &quot;#userId&quot;)</span><br><span class="line">    public User getUserById(Long userId) &#123;</span><br><span class="line">        return userRepository.findById(userId).orElse(null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @CacheEvict(key = &quot;#userId&quot;)</span><br><span class="line">    public void deleteUserById(Long userId) &#123;</span><br><span class="line">        userRepository.deleteById(userId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @CachePut(key = &quot;#user.id&quot;)</span><br><span class="line">    public User updateUser(User user) &#123;</span><br><span class="line">        return userRepository.save(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Cacheable(value = &quot;admins&quot;, key = &quot;#adminId&quot;)</span><br><span class="line">    public Admin getAdminById(Long adminId) &#123;</span><br><span class="line">        return adminRepository.findById(adminId).orElse(null);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中：</p>
+<ul>
+<li><code>@CacheConfig(cacheNames = &quot;users&quot;)</code>：在类级别设置默认缓存名称为“users”。</li>
+<li><code>getAdminById</code>方法通过<code>@Cacheable(value = &quot;admins&quot;, key = &quot;#adminId&quot;)</code>覆盖了默认的缓存名称，使用“admins”缓存。</li>
+</ul>
+<p>通过使用<code>@CacheConfig</code>，可以使代码更清晰，避免重复配置，提高可维护性。</p>
+<h3 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h3><ol>
+<li><strong>Spring AOP代理</strong>：<ul>
+<li>Spring AOP通过JDK动态代理或CGLIB创建代理对象。</li>
+<li>代理对象拦截方法调用，在调用目标方法之前或之后执行缓存逻辑。</li>
+</ul>
+</li>
+<li><strong>CacheManager和Cache接口</strong>：<ul>
+<li><code>CacheManager</code>：Spring缓存抽象中的核心接口，用于管理不同的缓存实现。</li>
+<li><code>Cache</code>：表示具体的缓存，提供基本的缓存操作方法，如<code>get</code>、<code>put</code>、<code>evict</code>等。</li>
+</ul>
+</li>
+<li><strong>缓存配置</strong>：<ul>
+<li>在Spring Boot项目中，通过<code>@EnableCaching</code>注解启用缓存功能。</li>
+<li>在配置文件中指定具体的缓存实现（如Ehcache、Redis等）的配置。</li>
+</ul>
+</li>
+</ol>
+<h3 id="示例项目配置"><a href="#示例项目配置" class="headerlink" title="示例项目配置"></a>示例项目配置</h3><p><strong>引入依赖</strong>：</p>
+<p>在<code>pom.xml</code>中添加依赖：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置文件Yaml</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: buzz-chat</span><br><span class="line"></span><br><span class="line">  data:</span><br><span class="line">    redis:</span><br><span class="line">      host: 127.0.0.1</span><br><span class="line">      port: 6379</span><br><span class="line">      database: 0</span><br><span class="line"></span><br><span class="line">  cache:</span><br><span class="line">    type: REDIS</span><br></pre></td></tr></table></figure>
+
+<p><strong>主配置类</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import org.springframework.boot.SpringApplication;</span><br><span class="line">import org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line">import org.springframework.cache.annotation.EnableCaching;</span><br><span class="line"></span><br><span class="line">@SpringBootApplication</span><br><span class="line">@EnableCaching</span><br><span class="line">public class CacheApplication &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(CacheApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过上述配置和代码，Spring Cache和缓存注解可以在Spring应用中无缝工作。AOP和缓存抽象机制使得这些缓存操作透明地集成到业务逻辑中，大大简化了开发和维护工作。</p>
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Cacheable"><span class="toc-text">@Cacheable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CacheEvict"><span class="toc-text">@CacheEvict</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CachePut"><span class="toc-text">@CachePut</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CacheConfig%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text">@CacheConfig的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-text">示例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E4%BD%BF%E7%94%A8-CacheConfig"><span class="toc-text">不使用@CacheConfig</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-CacheConfig"><span class="toc-text">使用@CacheConfig</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CacheConfig-%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">@CacheConfig 的使用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E7%A4%BA%E4%BE%8B"><span class="toc-text">进一步示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="toc-text">实现细节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE"><span class="toc-text">示例项目配置</span></a></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://alexhuihui.github.io/article/20240525.html">https://alexhuihui.github.io/article/20240525.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/article/20250113.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          使用 cloudflare tunnel
+        
+      </div>
+    </a>
+  
+  
+    <a href="/article/20240522.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">【MySQL】索引失效的场景</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/article/20250125.html">【DNS】DNS的架构</a>
+          </li>
+        
+          <li>
+            <a href="/article/20250113.html">使用 cloudflare tunnel</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240525.html">【Spring】缓存注解@Cacheable、@CacheEvict、@CachePut使用</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240522.html">【MySQL】索引失效的场景</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240430.html">【Docker】容器的本质</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AES/" style="font-size: 10px;">AES</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/Docker/" style="font-size: 15px;">Docker</a> <a href="/tags/ELK/" style="font-size: 10px;">ELK</a> <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/Go/" style="font-size: 20px;">Go</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/JWT/" style="font-size: 15px;">JWT</a> <a href="/tags/Kafka/" style="font-size: 15px;">Kafka</a> <a href="/tags/Kubernetes/" style="font-size: 15px;">Kubernetes</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/MD5/" style="font-size: 10px;">MD5</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 15px;">Mybatis</a> <a href="/tags/RSA/" style="font-size: 10px;">RSA</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/RocketMq/" style="font-size: 10px;">RocketMq</a> <a href="/tags/Spring/" style="font-size: 10px;">Spring</a> <a href="/tags/ZooKeeper/" style="font-size: 10px;">ZooKeeper</a> <a href="/tags/anki/" style="font-size: 10px;">anki</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/cloudflare/" style="font-size: 10px;">cloudflare</a> <a href="/tags/gRPC/" style="font-size: 10px;">gRPC</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/genanki/" style="font-size: 10px;">genanki</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/minikube/" style="font-size: 10px;">minikube</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/oauth2/" style="font-size: 15px;">oauth2</a> <a href="/tags/pyicloud/" style="font-size: 10px;">pyicloud</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/spring-authorization-server/" style="font-size: 15px;">spring-authorization-server</a> <a href="/tags/tunnel/" style="font-size: 10px;">tunnel</a> <a href="/tags/%E4%BA%8B%E5%8A%A1/" style="font-size: 10px;">事务</a> <a href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" style="font-size: 10px;">事务处理</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">并发</a> <a href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" style="font-size: 10px;">延时队列</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" style="font-size: 10px;">微信机器人</a> <a href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" style="font-size: 15px;">技术分享</a> <a href="/tags/%E6%8E%88%E6%9D%83/" style="font-size: 10px;">授权</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E7%AD%BE%E5%90%8D/" style="font-size: 15px;">签名</a> <a href="/tags/%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">设计</a> <a href="/tags/%E9%87%8D%E6%9E%84/" style="font-size: 10px;">重构</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DNS/">DNS</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ELK/">ELK</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/">Go语言学习</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2%E6%8A%98%E8%85%BE/">Hexo博客折腾</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kubernetes/">Kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LLM/">LLM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maven/">Maven</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/RocketMq/">RocketMq</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/cloudflare/">cloudflare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gRPC/">gRPC</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/spring-authorization-server/">spring-authorization-server</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AA%E4%BA%BA%E9%A1%B9%E7%9B%AE/">个人项目</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1/">事务</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/">事务处理</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B9%B6%E5%8F%91/">并发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/">微信机器人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">技术分享</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%8D%E6%9E%84/">重构</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025年01月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024年05月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023年12月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年12月</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AES/" rel="tag">AES</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/" rel="tag">ELK</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JWT/" rel="tag">JWT</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/" rel="tag">Kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MD5/" rel="tag">MD5</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSA/" rel="tag">RSA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RocketMq/" rel="tag">RocketMq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anki/" rel="tag">anki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/" rel="tag">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudflare/" rel="tag">cloudflare</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gRPC/" rel="tag">gRPC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gcc/" rel="tag">gcc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/genanki/" rel="tag">genanki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minikube/" rel="tag">minikube</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/" rel="tag">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth2/" rel="tag">oauth2</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pyicloud/" rel="tag">pyicloud</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-authorization-server/" rel="tag">spring-authorization-server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tunnel/" rel="tag">tunnel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1/" rel="tag">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" rel="tag">事务处理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" rel="tag">延时队列</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" rel="tag">微信机器人</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" rel="tag">技术分享</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%88%E6%9D%83/" rel="tag">授权</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E7%BB%84/" rel="tag">数组</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88/" rel="tag">栈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%BE%E5%90%8D/" rel="tag">签名</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1/" rel="tag">设计</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E6%9E%84/" rel="tag">重构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%9F%E5%88%97/" rel="tag">队列</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example1.com/">site-name1</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example2.com/">site-name2</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example3.com/">site-name3</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>
+          ，
+          <i class="fa fa-views"></i>
+          <i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2025 汪永晖.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        
+            <span>Count by <a href="http://busuanzi.ibruce.info/" target="_blank">busuanzi.</a></span>
+        
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+  
+<script src="/localshare/js/social-share.js"></script>
+
+  
+<script src="/localshare/js/qrcode.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>

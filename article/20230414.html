@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>【LLM】LLM入门 | 秋过冬漫长</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <meta name="description" content="java">
+  
+  
+    <meta name="keywords" content="技术博客">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="秋过冬漫长" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/localshare/css/share.css">
+
+  
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">秋过冬漫长</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">没有比脚更长的路，走过去，前面是个天！</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-【LLM】LLM入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      【LLM】LLM入门
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2023-04-14T11:54:06.000Z" itemprop="datePublished">2023年04月14日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/LLM/">LLM</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/article/20230414.html#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="LLM介绍"><a href="#LLM介绍" class="headerlink" title="LLM介绍"></a><code>LLM</code>介绍</h3><p>语言模型在最近几年内迅速提高，大型语言模型（LLMs）如GPT-3和GPT-4成为中心。这些模型因其能够以惊人的技巧执行各种任务而变得流行。此外，随着这些模型的参数数量（数十亿！）增加，它们不可预测地获得了新的能力。</p>
+<p>在本文中，我们将探讨LLMs、它们可以执行的任务、它们的缺点以及各种提示工程策略。</p>
+<span id="more"></span> 
+
+<h4 id="什么是LLMs？"><a href="#什么是LLMs？" class="headerlink" title="什么是LLMs？"></a>什么是LLMs？</h4><p>LLMs是神经网络，在大量文本数据上进行了训练。训练过程使模型学习文本中的模式，包括语法、句法和词汇关联。这些学习到的模式被用于生成类似人类文字，使其非常适合自然语言处理（NLP）任务。</p>
+<h4 id="哪些LLM可用？"><a href="#哪些LLM可用？" class="headerlink" title="哪些LLM可用？"></a>哪些LLM可用？</h4><p>有几个LLM可用，其中GPT-4最受欢迎。其他模型包括 LLaMA、PaLM、BERT 和 T5 等等。每个模型都有其优点和缺点，并且一些是开放性使用而其他则只能通过API使用。</p>
+<h4 id="LLM-的局限性"><a href="#LLM-的局限性" class="headerlink" title="LLM 的局限性"></a>LLM 的局限性</h4><p>尽管表现出色, 但 LLMS 也存在一些限制. 其中一个重要缺陷是无法超越提示中提供的信息进行推理。此外，LLMs 可以根据它们所训练的数据生成有偏见的文本。控制 LLMs 的输出也很具挑战性，因此需要使用提示工程策略来实现所需的输出。。</p>
+<h3 id="你能执行哪些任务？"><a href="#你能执行哪些任务？" class="headerlink" title="你能执行哪些任务？"></a>你能执行哪些任务？</h3><p>我们可以通过为每个案例格式化提示来指导LLMs执行特定的任务。以下是这些任务和提示模板以及每个示例的列表。</p>
+<h4 id="文本摘要"><a href="#文本摘要" class="headerlink" title="文本摘要"></a>文本摘要</h4><p>LLMs可以生成长文本的摘要，使内容更易于理解和消化。我们可以使用以下提示模板请求对一段文字进行摘要：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;Full text&gt;</span><br><span class="line">Summarize the text above: / Explain the text above in &lt;N&gt; sentences:</span><br></pre></td></tr></table></figure>
+
+<p>例如，我们可以要求按照以下提示对这段文本进行总结：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">In a mechanical watch the watch&#x27;s gears are turned by a spiral spring called a mainspring. In a manual watch energy is stored in the mainspring by turning a knob, the crown on the side of the watch. Then the energy from the mainspring powers the watch movement until it runs down, requiring the spring to be wound again.</span><br><span class="line">A self-winding watch movement has a mechanism which winds the mainspring using the natural motions of the wearer&#x27;s body. The watch contains an oscillating weight that turns on a pivot. The normal movements of the watch in the user&#x27;s pocket (for a pocketwatch) or on the user&#x27;s arm (for a wristwatch) cause the rotor to pivot on its staff, which is attached to a ratcheted winding mechanism. The motion of the watch is thereby translated into circular motion of the weight which, through a series of reverser and reducing gears, eventually winds the mainspring. There are many different designs for modern self-winding mechanisms. Some designs allow winding of the watch to take place while the weight swings in only one direction while other, more advanced, mechanisms have two ratchets and wind the mainspring during both clockwise and anti-clockwise weight motions.</span><br><span class="line">Explain the text above in 2 sentences:</span><br></pre></td></tr></table></figure>
+
+<p>这将产生以下输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A mechanical watch uses a mainspring to power the movement of the watch&#x27;s gears. In a manual watch, the mainspring is wound by turning a knob, while a self-winding watch uses the natural motion of the wearer&#x27;s body to wind the mainspring through an oscillating weight and ratcheted winding mechanism.</span><br></pre></td></tr></table></figure>
+
+<h4 id="信息提取"><a href="#信息提取" class="headerlink" title="信息提取"></a>信息提取</h4><p>LLMs可以从大量文本中识别和提取特定信息。这在新闻和商业情报等领域非常有用。以下模板指导模型提取信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;Full text&gt;</span><br><span class="line">Mention X in the text above: / List X in the text above:</span><br></pre></td></tr></table></figure>
+
+<p>例如，我们可以要求从以下文本中提取地点名称：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The earliest credible evidence for a successful design is the watch made by the Swiss watchmaker Abraham-Louis Perrelet, who lived in Le Locle. In late 1776 or early 1777, he invented a self-winding mechanism for pocket watches using an oscillating weight inside the watch that moved up and down. The Geneva Society of Arts, reporting on this watch in 1777, stated that 15 minutes walking was necessary to fully wind the watch.</span><br><span class="line">List the names of places in the text above:</span><br></pre></td></tr></table></figure>
+
+<p>这将产生以下输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Le Locle, Geneva.</span><br></pre></td></tr></table></figure>
+
+<h3 id="问答"><a href="#问答" class="headerlink" title="问答"></a>问答</h3><p>LLMs还可以根据提示提供的信息回答问题。以下模板可用于指导LLM回答问题：</p>
+<p>模板</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">基于下面的上下文回答问题。&lt;其他说明&gt;。如果不确定，请回复“不确定”。</span><br><span class="line">上下文：&lt;Context&gt;</span><br><span class="line">Q：&lt;Question&gt;</span><br><span class="line">A：</span><br></pre></td></tr></table></figure>
+
+<p>例如，使用以下提示：</p>
+<p>提示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">基于下面的上下文回答问题。用一句话回答。如果不确定，请回复“不确定”。</span><br><span class="line">上下文：自动表也称为自动绕线表或简单地称为自动表，是一种机械表，在佩戴者的自然运动中提供能量来绕制主发条，使手工绕线变得不必要。它与手动表有所区别，因为手动表必须定期手摇其主发条。</span><br><span class="line">Q：自动腕表需要手动绕吗？</span><br><span class="line">A：</span><br></pre></td></tr></table></figure>
+
+<p>ChatGPT 回应道：</p>
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">否，如果足够佩戴，则无需手动缠绕自动腕表，因为佩戴者的自然运动会提供能量来维持其正常运转。</span><br></pre></td></tr></table></figure>
+
+<h4 id="文本分类"><a href="#文本分类" class="headerlink" title="文本分类"></a>文本分类</h4><p>LLMs可以将文本分类为预定义的类别，例如情感分析或垃圾邮件检测。您可以按以下方式格式化文本分类指令：</p>
+<p>模板</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">将文本分类为&lt;选择列表&gt;：</span><br><span class="line">文本：&lt;完整文本&gt;</span><br><span class="line">分类：</span><br></pre></td></tr></table></figure>
+
+<p>例如，我们可以尝试对一段文字进行情感分析，判断其情绪是积极的、中性的还是消极的：</p>
+<p>提示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">将该段文字归类为积极、中性或消极：</span><br><span class="line">文本：那个投篮选择太糟糕了。</span><br><span class="line">分类：</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">消极</span><br></pre></td></tr></table></figure>
+
+<h4 id="对话"><a href="#对话" class="headerlink" title="对话"></a>对话</h4><p>LLM可以生成类似人类的对话，使它们在聊天机器人和客户服务应用程序中非常有用。我们可以指示LLM按照特定方式跟随对话行动。</p>
+<p>模板</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">以下是与&lt;Actor&gt;的对话。 &lt;Actor&gt;应该回答&lt;Further instructions&gt;。</span><br><span class="line">个人：&lt;Conversation&gt;</span><br><span class="line">&lt;Actor&gt;：&lt;Response&gt;</span><br><span class="line">个人：&lt;Conversation&gt;</span><br><span class="line">&lt;Actor&gt;：</span><br></pre></td></tr></table></figure>
+
+<p>LLM将填写我们指示其类型演员的响应，并且我们可以通过再次将整个会话及新响应传递给它来继续会话。例如：</p>
+<p>提示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">以下是与律师的对话。 律师应简单明了地回答。</span><br><span class="line">个人：您好，我想知道如何争议停车罚单</span><br><span class="line">律师：</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当然，我能够提供帮助。第一步是检查罚单是否存在任何错误或失误。如果发现任何问题，则可以使用这些作为争议罚款的理由。如果没有错误，则仍然可以通过提供证据支持您的案件（例如照片或证言）来争议罚款。您还可以请求听证会以亲自陈述您的案件。</span><br></pre></td></tr></table></figure>
+
+<p>提示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">以下是与律师的对话。 律师应简单明了地回答。</span><br><span class="line">个人：您好，我想知道如何争议停车罚单</span><br><span class="line">律师：当然，我能够提供帮助。第一步是检查罚单是否存在任何错误或失误。如果发现任何问题，则可以使用这些作为争议罚款的理由。如果没有错误，则仍然可以通过提供证据支持您的案件（例如照片或证言）来争议罚款。您还可以请求听证会以亲自陈述您的案件。</span><br><span class="line">个人：我如何请求听证会？</span><br><span class="line">律师：</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">要请求听证会，您需要按照票据背面或网站上的说明进行操作</span><br></pre></td></tr></table></figure>
+
+<h4 id="代码生成"><a href="#代码生成" class="headerlink" title="代码生成"></a>代码生成</h4><p>LLMs可以生成代码，使开发人员更容易创建复杂的软件程序。我们可以编写一个代码注释来描述我们希望代码执行的操作，LLM将能够尽力完成它。我们希望代码执行的操作越复杂，我们在提示注释中需要提供的信息就越具体和详细。</p>
+<p>模板可能因所需生成的编程语言而异，但我建议大致遵循以下模板：</p>
+<p>模板</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;您选择的语言的注释符号（/*或&#x27;&#x27;&#x27;或#）&gt;</span><br><span class="line">方法：&lt;方法名称&gt;</span><br><span class="line">语言：&lt;编程语言&gt;</span><br><span class="line">说明：&lt;方法必须执行什么操作&gt;</span><br><span class="line">参数：&lt;方法将接收哪些参数&gt;</span><br><span class="line">上下文：&lt;实现该方法所需进一步信息（URL、数据库等）&gt;</span><br><span class="line">输出：&lt;该方法输出内容&gt;</span><br><span class="line">&lt;您选择的语言的注释符号（/*或&#x27;&#x27;&#x27;或#）&gt;</span><br></pre></td></tr></table></figure>
+
+<p>例如，如果我们想要获取分页API，则可以编写以下评论：</p>
+<p>提示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/* Method: fetchFirst5Pages</span><br><span class="line"> * Language: Javascript</span><br><span class="line"> * Description: Fetch the first 5 pages from this paginated API: http://example.com/pages/?n=x</span><br><span class="line"> * Context: This API accepts the following URL parameters:</span><br><span class="line"> *   n: the number of the page to fetch</span><br><span class="line"> * Output: the content of the first 5 pages</span><br><span class="line"> */</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">这是JavaScript中fetchFirst5Pages函数实现示例，假设使用了fetch函数：</span><br><span class="line"></span><br><span class="line">async function fetchFirst5Pages() &#123;</span><br><span class="line">  const baseUrl = &#x27;http://example.com/pages/?n=&#x27;;</span><br><span class="line">  const pages = [];</span><br><span class="line"></span><br><span class="line">  for (let i = 1; i &lt;= 5; i++) &#123;</span><br><span class="line">    const url = baseUrl + i;</span><br><span class="line">    const response = await fetch(url);</span><br><span class="line"></span><br><span class="line">    if (!response.ok) &#123;</span><br><span class="line">      throw new Error(`Error fetching page $&#123;i&#125;`);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    const pageData = await response.json();</span><br><span class="line">    pages.push(pageData);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return pages;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">该函数使用循环通过将页码附加到基本URL来获取API的前5个页面。它检查服务器的响应是否正常，如果不正常则抛出错误。然后，它从响应中解析JSON数据并将其添加到页面数组中。最后，它返回页面数组。</span><br></pre></td></tr></table></figure>
+
+<h4 id="推理"><a href="#推理" class="headerlink" title="推理"></a>推理</h4><p>法学硕士可能会在一些基本任务上遇到困难，比如算术问题。然而，如果我们要求LLM对其回答进行推理，我们可以帮助它得出正确的答案。这是我推荐的模板：</p>
+<p>模板</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">问： &lt;问题&gt;</span><br><span class="line">答： 让我们逐步解决这个问题，确保我们有正确的答案。首先，&lt;说明&gt;。</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，如果没有推理就提出一个简单的算术问题，则无法成功：</p>
+<p>提示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">回答以下问题。 如果不确定答案，请回复“不确定”。</span><br><span class="line">问：以下列表中质数之和是3的倍数：[2, 4, 6, 7, 9, 14]</span><br><span class="line">A: [是或否]</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<p>不是。 列表[2、4、6、7、9、14]中质数之和不是3的倍数。 因此，答案为“否”。</p>
+<p>但是，如果指示LLM对其回答进行推理，则会得到非常不同的结果：</p>
+<p>提示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">问：以下列表中质数之和是否为3的倍数？ [2、4、6、7、9、14]</span><br><span class="line">A: 让我们逐步解决这个问题以确保我们有正确的答案。 首先找到列表中所有质数并将它们加起来。 然后检查所得数字是否可以被3整除。</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">好吧，请让我们逐步解决这个问题。</span><br><span class="line"></span><br><span class="line">列表中的质数是2和7。 所以我们可以将它们加在一起：</span><br><span class="line"></span><br><span class="line">2 + 7 = 9</span><br><span class="line"></span><br><span class="line">结果为9。 现在我们需要检查它是否是3的倍数。 我们可以通过检查9除以3的余数是否等于0来做到这一点：</span><br><span class="line"></span><br><span class="line">9％3 = 0</span><br><span class="line"></span><br><span class="line">由于余数为0，因此我们知道9确实是3的倍数。</span><br><span class="line"></span><br><span class="line">因此，答案是“是”，列表[2、4、6、7、9、14]中质数之和是3的倍数。</span><br></pre></td></tr></table></figure>
+
+<h4 id="策略"><a href="#策略" class="headerlink" title="策略"></a>策略</h4><p>虽然这些模板可以帮助您挤出LLMs的潜力以满足您的需求，但有时它们仍然可能在某些复杂任务上遇到困难。已经开发了一些技术来帮助LLMs得出令人满意的答案。到目前为止，我们只使用了零-shot提示，现在我们将对其进行定义。但是，我们可以使用更复杂的技术。</p>
+<h5 id="零-shot提示"><a href="#零-shot提示" class="headerlink" title="零-shot提示"></a>零-shot提示</h5><p>在本文中的所有示例中，我们都使用了零-shot提示。零-shot提示意味着向LLM传递一个提示，其中只包含我们想要它回答的问题，并没有任何其他情况下应该如何响应的示例。例如，在早期示例中：</p>
+<p>Prompt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">将文本分类为积极、中性或消极：</span><br><span class="line">Text: That shot selection was awful</span><br><span class="line">Classification:</span><br></pre></td></tr></table></figure>
+
+<p>Output</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Negative</span><br></pre></td></tr></table></figure>
+
+<p>这可能不足以让模型准确地回答我们想要它回答的问题。让我们看看还有哪些替代方案。</p>
+<h5 id="少量样本提示"><a href="#少量样本提示" class="headerlink" title="少量样本提示"></a>少量样本提示</h5><p>与零-shot提示相反，在少量样本提示中，在提问之前给LLM提供一些如何响应的示例。例如，假设我们想像先前示例那样对文本进行情感分类。但是每次都希望以非常特定格式获得答案。我们可以事先给它一些示例，如下所示：</p>
+<p>Prompt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">将文本分类为积极、中性或消极：</span><br><span class="line">Text: Today the weather is fantastic</span><br><span class="line">Classification: Pos</span><br><span class="line">Text: The furniture is small.</span><br><span class="line">Classification: Neu</span><br><span class="line">Text: I don&#x27;t like your attitude</span><br><span class="line">Classification: Neg</span><br><span class="line">Text: That shot selection was awful</span><br><span class="line">Classification:</span><br></pre></td></tr></table></figure>
+
+<p>Output</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Neg</span><br></pre></td></tr></table></figure>
+
+<h5 id="思维链提示"><a href="#思维链提示" class="headerlink" title="思维链提示"></a>思维链提示</h5><p>对于更复杂的任务，我们可以将少量示例提示与使模型推理其答案相结合。 我们可以使用之前的相同示例来查看推理和少量提示如何影响结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Q: The sum of prime numbers in the following list are a multiple of 3: [2, 4, 6, 7, 9, 14]</span><br><span class="line">A: The prime numbers in the list are 2 and 7. Their sum is 9. 9 % 3 = 0. The answer is yes.</span><br><span class="line">Q: The sum of prime numbers in the following list are a multiple of 3: [1, 2, 4, 7, 8, 10]</span><br><span class="line">A: The prime numbers in the list are 1, 2 and 7. Their sum is 10. 10 % 3 = 1. The answer is no.</span><br><span class="line">Q: The sum of prime numbers in the following list are a multiple of 3: [1, 2, 3, 4]</span><br><span class="line">A: The prime numbers in the list are 1, 2 and 3. Their sum is 6. 6 % 3 = 0. The answer is yes.</span><br><span class="line">Q: The sum of prime numbers in the following list are a multiple of 3: [5, 6, 7, 8]</span><br><span class="line">A:</span><br><span class="line">The prime numbers in the list are 5 and 7. Their sum is 12. 12 % 3 = 0. The answer is yes.</span><br></pre></td></tr></table></figure>
+
+<h3 id="最后的注释"><a href="#最后的注释" class="headerlink" title="最后的注释"></a>最后的注释</h3><p>LLM已经彻底改变了自然语言处理领域，但为了最大化其潜力，提示工程至关重要。通过理解LLM可以执行的任务、它们的缺点以及各种提示工程策略，开发人员可以利用LLM的能力来创建创新和有效的解决方案。未来可能会开发更多的策略和技术，因此请继续关注这个领域的进展，以进一步最大化LLM潜力。此外，随着LLMs参数数量不断增加到数十亿级别，我们现在甚至无法想象更多任务将有可能被实现。想到使用这些新工具所能实现什么样子以及它们将为我们服务于哪些用例是非常令人兴奋的事情。</p>
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#LLM%E4%BB%8B%E7%BB%8D"><span class="toc-text">LLM介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFLLMs%EF%BC%9F"><span class="toc-text">什么是LLMs？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%AA%E4%BA%9BLLM%E5%8F%AF%E7%94%A8%EF%BC%9F"><span class="toc-text">哪些LLM可用？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LLM-%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-text">LLM 的局限性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E8%83%BD%E6%89%A7%E8%A1%8C%E5%93%AA%E4%BA%9B%E4%BB%BB%E5%8A%A1%EF%BC%9F"><span class="toc-text">你能执行哪些任务？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E6%9C%AC%E6%91%98%E8%A6%81"><span class="toc-text">文本摘要</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%8F%90%E5%8F%96"><span class="toc-text">信息提取</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E7%AD%94"><span class="toc-text">问答</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB"><span class="toc-text">文本分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E8%AF%9D"><span class="toc-text">对话</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="toc-text">代码生成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E7%90%86"><span class="toc-text">推理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AD%96%E7%95%A5"><span class="toc-text">策略</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%9B%B6-shot%E6%8F%90%E7%A4%BA"><span class="toc-text">零-shot提示</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B0%91%E9%87%8F%E6%A0%B7%E6%9C%AC%E6%8F%90%E7%A4%BA"><span class="toc-text">少量样本提示</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%9D%E7%BB%B4%E9%93%BE%E6%8F%90%E7%A4%BA"><span class="toc-text">思维链提示</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E7%9A%84%E6%B3%A8%E9%87%8A"><span class="toc-text">最后的注释</span></a></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://alexhuihui.github.io/article/20230414.html">https://alexhuihui.github.io/article/20230414.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
+
+          
+    <div class="social-share">
+      <span>分享到:</span>
+    </div>
+
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/article/20230512.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          【项目】分诊知识库系统设计
+        
+      </div>
+    </a>
+  
+  
+    <a href="/article/20230411.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">【项目】升级现有的授权系统</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/article/20250125.html">【DNS】DNS的架构</a>
+          </li>
+        
+          <li>
+            <a href="/article/20250113.html">使用 cloudflare tunnel</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240525.html">【Spring】缓存注解@Cacheable、@CacheEvict、@CachePut使用</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240522.html">【MySQL】索引失效的场景</a>
+          </li>
+        
+          <li>
+            <a href="/article/20240430.html">【Docker】容器的本质</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AES/" style="font-size: 10px;">AES</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/Docker/" style="font-size: 15px;">Docker</a> <a href="/tags/ELK/" style="font-size: 10px;">ELK</a> <a href="/tags/ElasticSearch/" style="font-size: 15px;">ElasticSearch</a> <a href="/tags/Go/" style="font-size: 20px;">Go</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/JWT/" style="font-size: 15px;">JWT</a> <a href="/tags/Kafka/" style="font-size: 15px;">Kafka</a> <a href="/tags/Kubernetes/" style="font-size: 15px;">Kubernetes</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/MD5/" style="font-size: 10px;">MD5</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 15px;">Mybatis</a> <a href="/tags/RSA/" style="font-size: 10px;">RSA</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/RocketMq/" style="font-size: 10px;">RocketMq</a> <a href="/tags/Spring/" style="font-size: 10px;">Spring</a> <a href="/tags/ZooKeeper/" style="font-size: 10px;">ZooKeeper</a> <a href="/tags/anki/" style="font-size: 10px;">anki</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/cloudflare/" style="font-size: 10px;">cloudflare</a> <a href="/tags/gRPC/" style="font-size: 10px;">gRPC</a> <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/genanki/" style="font-size: 10px;">genanki</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/minikube/" style="font-size: 10px;">minikube</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/oauth2/" style="font-size: 15px;">oauth2</a> <a href="/tags/pyicloud/" style="font-size: 10px;">pyicloud</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/spring-authorization-server/" style="font-size: 15px;">spring-authorization-server</a> <a href="/tags/tunnel/" style="font-size: 10px;">tunnel</a> <a href="/tags/%E4%BA%8B%E5%8A%A1/" style="font-size: 10px;">事务</a> <a href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" style="font-size: 10px;">事务处理</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">并发</a> <a href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" style="font-size: 10px;">延时队列</a> <a href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" style="font-size: 10px;">微信机器人</a> <a href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" style="font-size: 15px;">技术分享</a> <a href="/tags/%E6%8E%88%E6%9D%83/" style="font-size: 10px;">授权</a> <a href="/tags/%E6%95%B0%E7%BB%84/" style="font-size: 10px;">数组</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a> <a href="/tags/%E7%AD%BE%E5%90%8D/" style="font-size: 15px;">签名</a> <a href="/tags/%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">设计</a> <a href="/tags/%E9%87%8D%E6%9E%84/" style="font-size: 10px;">重构</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 10px;">链表</a> <a href="/tags/%E9%98%9F%E5%88%97/" style="font-size: 10px;">队列</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/DNS/">DNS</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ELK/">ELK</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/">Go语言学习</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2%E6%8A%98%E8%85%BE/">Hexo博客折腾</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kubernetes/">Kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/LLM/">LLM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Maven/">Maven</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/RocketMq/">RocketMq</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/cloudflare/">cloudflare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gRPC/">gRPC</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/spring-authorization-server/">spring-authorization-server</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AA%E4%BA%BA%E9%A1%B9%E7%9B%AE/">个人项目</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1/">事务</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/">事务处理</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B9%B6%E5%8F%91/">并发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/">微信机器人</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">技术分享</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%8D%E6%9E%84/">重构</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025年01月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024年05月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023年12月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年12月</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-tag"></i> 标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AES/" rel="tag">AES</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELK/" rel="tag">ELK</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ElasticSearch/" rel="tag">ElasticSearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go/" rel="tag">Go</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JWT/" rel="tag">JWT</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/" rel="tag">Kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MD5/" rel="tag">MD5</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSA/" rel="tag">RSA</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RocketMq/" rel="tag">RocketMq</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anki/" rel="tag">anki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/" rel="tag">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudflare/" rel="tag">cloudflare</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gRPC/" rel="tag">gRPC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gcc/" rel="tag">gcc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/genanki/" rel="tag">genanki</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minikube/" rel="tag">minikube</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/" rel="tag">node</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth2/" rel="tag">oauth2</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pyicloud/" rel="tag">pyicloud</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-authorization-server/" rel="tag">spring-authorization-server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tunnel/" rel="tag">tunnel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1/" rel="tag">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" rel="tag">事务处理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/" rel="tag">延时队列</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA/" rel="tag">微信机器人</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" rel="tag">技术分享</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%88%E6%9D%83/" rel="tag">授权</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E7%BB%84/" rel="tag">数组</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88/" rel="tag">栈</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%BE%E5%90%8D/" rel="tag">签名</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1/" rel="tag">设计</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E6%9E%84/" rel="tag">重构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%9F%E5%88%97/" rel="tag">队列</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example1.com/">site-name1</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example2.com/">site-name2</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="http://www.example3.com/">site-name3</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/sitemap.xml">网站地图</a>
+        <span> | </span><a href="/atom.xml">订阅本站</a>
+        <span> | </span><a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>
+          ，
+          <i class="fa fa-views"></i>
+          <i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2025 汪永晖.</span>
+        <span>Theme by <a href="https://github.com/chaooo/hexo-theme-BlueLake/" target="_blank">BlueLake.</a></span>
+        
+            <span>Count by <a href="http://busuanzi.ibruce.info/" target="_blank">busuanzi.</a></span>
+        
+        <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo.</a></span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+  
+<script src="/localshare/js/social-share.js"></script>
+
+  
+<script src="/localshare/js/qrcode.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>
