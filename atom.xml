@@ -6,7 +6,7 @@
   <link href="https://alexhuihui.github.io/atom.xml" rel="self"/>
   
   <link href="https://alexhuihui.github.io/"/>
-  <updated>2025-01-25T12:29:09.828Z</updated>
+  <updated>2025-04-16T09:18:52.248Z</updated>
   <id>https://alexhuihui.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【故障排查】七牛云上传问题排查</title>
+    <link href="https://alexhuihui.github.io/article/20250416.html"/>
+    <id>https://alexhuihui.github.io/article/20250416.html</id>
+    <published>2025-04-16T08:54:53.000Z</published>
+    <updated>2025-04-16T09:18:52.248Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="七牛云上传问题排查"><a href="#七牛云上传问题排查" class="headerlink" title="七牛云上传问题排查"></a>七牛云上传问题排查</h1><p>在一个商城的应用中遇到了文件上传缓慢的问题，比如上传一个 3M 的图片，居然耗时2分钟。这明显是有问题的，接下来是排查的流程。</p><span id="more"></span> <h2 id="排查方向（分服务端、本地客户端、网络、七牛配置等维度）"><a href="#排查方向（分服务端、本地客户端、网络、七牛配置等维度）" class="headerlink" title="排查方向（分服务端、本地客户端、网络、七牛配置等维度）"></a>排查方向（分服务端、本地客户端、网络、七牛配置等维度）</h2><h3 id="一、客户端代码问题"><a href="#一、客户端代码问题" class="headerlink" title="一、客户端代码问题"></a>一、客户端代码问题</h3><ul><li>有没有使用 <code>InputStream</code> 异常耗时的写法？（比如读取流特别慢、阻塞）</li><li>文件是临时生成的吗？（临时文件生成缓慢）</li><li>有没有对 <code>fileBytes</code> 做 base64 编码等多余处理？</li></ul><hr><h3 id="二、网络问题"><a href="#二、网络问题" class="headerlink" title="二、网络问题"></a>二、网络问题</h3><h4 id="📡-服务端到七牛的网络延迟大或者带宽不足？"><a href="#📡-服务端到七牛的网络延迟大或者带宽不足？" class="headerlink" title="📡 服务端到七牛的网络延迟大或者带宽不足？"></a>📡 服务端到七牛的网络延迟大或者带宽不足？</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">traceroute upload.qiniup.com</span><br></pre></td></tr></table></figure><hr><h3 id="三、七牛云配置是否异常（比如-bucket-绑定了较远的存储区域）"><a href="#三、七牛云配置是否异常（比如-bucket-绑定了较远的存储区域）" class="headerlink" title="三、七牛云配置是否异常（比如 bucket 绑定了较远的存储区域）"></a>三、七牛云配置是否异常（比如 bucket 绑定了较远的存储区域）</h3><h4 id="Region-设置是否正确？"><a href="#Region-设置是否正确？" class="headerlink" title="Region 设置是否正确？"></a>Region 设置是否正确？</h4><p>七牛有多个区域，比如华东、华北、华南、北美。应该设置与服务器物理位置最接近的：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Configuration cfg = <span class="keyword">new</span> Configuration(Region.huabei()); <span class="comment">// 华北</span></span><br></pre></td></tr></table></figure><hr><h3 id="四、排查上传过程日志"><a href="#四、排查上传过程日志" class="headerlink" title="四、排查上传过程日志"></a>四、排查上传过程日志</h3><h4 id="打开详细日志："><a href="#打开详细日志：" class="headerlink" title="打开详细日志："></a>打开详细日志：</h4><ul><li>七牛 SDK 支持开启 debug 模式（输出日志）</li><li>在服务端记录上传耗时：从接收到文件 → 上传完成 的整体耗时</li></ul><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line"><span class="comment">// 上传逻辑</span></span><br><span class="line"><span class="keyword">long</span> end = System.currentTimeMillis();</span><br><span class="line">System.out.println(<span class="string">&quot;上传耗时: &quot;</span> + (end - start) + <span class="string">&quot;ms&quot;</span>);</span><br></pre></td></tr></table></figure><h2 id="修复代码"><a href="#修复代码" class="headerlink" title="修复代码"></a>修复代码</h2><ol><li>使用 byte[] 上传</li><li>配置相近的上传区域</li></ol><p>以上改动都没有优化上传速度，怀疑是网络出问题了</p><h2 id="排查网络问题"><a href="#排查网络问题" class="headerlink" title="排查网络问题"></a>排查网络问题</h2><p>通过 ping 等工具发现延迟和丢包情况是非常健康的，紧接着使用iperf3测试带宽</p><p>A 服务器运行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iperf3 -s</span><br></pre></td></tr></table></figure><p>B 服务器运行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iperf3 -c &lt;server-ip&gt; -R   <span class="comment"># 测试上传带宽</span></span><br></pre></td></tr></table></figure><p>发现上行速度确实很慢</p><p>为了更进一步的确认 又使用 <code>nload </code>查看具体网卡的实时上传速率</p><p>发现在上传文件的时候 对应网卡的上传速度只有 几十 <code>kBit/s</code></p><p>那么就确定是带宽不足的问题了</p><h2 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h2><ol><li><p>确认是不是 docker 限制了速率</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect file-prod | grep -i bandwidth</span><br></pre></td></tr></table></figure></li><li><p>确认是不是云服务器的上行带宽有限制</p></li></ol><p>最终我们找到了影响上传速度的问题，并成功解决。</p>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;七牛云上传问题排查&quot;&gt;&lt;a href=&quot;#七牛云上传问题排查&quot; class=&quot;headerlink&quot; title=&quot;七牛云上传问题排查&quot;&gt;&lt;/a&gt;七牛云上传问题排查&lt;/h1&gt;&lt;p&gt;在一个商城的应用中遇到了文件上传缓慢的问题，比如上传一个 3M 的图片，居然耗时2分钟。这明显是有问题的，接下来是排查的流程。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="故障排查" scheme="https://alexhuihui.github.io/categories/%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/"/>
+    
+    
+    <category term="故障排查" scheme="https://alexhuihui.github.io/tags/%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/"/>
+    
+  </entry>
   
   <entry>
     <title>【DNS】DNS的架构</title>
@@ -430,27 +451,6 @@
     
     
     <category term="Redis" scheme="https://alexhuihui.github.io/tags/Redis/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【ElasticSearch】Elasticsearch简介及其发展历史</title>
-    <link href="https://alexhuihui.github.io/article/20230228.html"/>
-    <id>https://alexhuihui.github.io/article/20230228.html</id>
-    <published>2023-02-28T11:54:06.000Z</published>
-    <updated>2025-01-25T13:05:22.735Z</updated>
-    
-    <content type="html"><![CDATA[<p>Elasticsearch 是一种开源的搜索引擎，它采用 Lucene 库作为底层搜索引擎，并且通过 RESTful API 提供分布式搜索和分析功能。 Elasticsearch 能够快速地处理大量的结构化和非结构化数据，并提供了全文搜索、聚合分析、地理空间搜索等多种功能。</p><span id="more"></span> <p>Elasticsearch 的发展历史可以追溯到 2010 年，当时 Shay Banon（现在是 Elasticsearch 公司的 CEO）开始开发一种名为 Compass 的搜索引擎。随着时间的推移，Compass 逐渐发展成为 Elasticsearch。Elasticsearch 在开源社区得到了广泛的关注和使用，并且逐渐成为一种非常流行的搜索引擎。</p><p>Elasticsearch 的一个典型应用场景是日志分析。例如，当一个公司的网络设备、服务器和应用程序发生故障时，日志数据通常会被记录下来。使用 Elasticsearch 可以帮助工程师快速地查找故障原因，例如确定哪些设备、服务器或应用程序出现了问题。Elasticsearch 还可以与 Kibana 等工具集成，使用户可以可视化地分析数据。</p><p>以下是 Elasticsearch 的一些主要特点：</p><p>分布式： Elasticsearch 是一种分布式搜索引擎，可以跨多台服务器分布式地存储和处理数据。这使得 Elasticsearch 具有高可用性、容错性和可扩展性。</p><p>实时搜索和分析： Elasticsearch 可以实时地搜索和分析数据，使用户可以及时地获得最新的结果。</p><p>全文搜索： Elasticsearch 可以对全文进行搜索，支持多种语言和复杂查询。</p><p>聚合分析： Elasticsearch 可以对数据进行聚合分析，例如计算平均值、最大值、最小值等等。</p><p>地理空间搜索： Elasticsearch 支持地理空间搜索，使用户可以在地图上搜索位置相关的信息。</p><p>总之，Elasticsearch 是一种功能强大、可靠的搜索引擎，它在搜索、分析和可视化数据方面都有广泛的应用。</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;Elasticsearch 是一种开源的搜索引擎，它采用 Lucene 库作为底层搜索引擎，并且通过 RESTful API 提供分布式搜索和分析功能。 Elasticsearch 能够快速地处理大量的结构化和非结构化数据，并提供了全文搜索、聚合分析、地理空间搜索等多种功能。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="ElasticSearch" scheme="https://alexhuihui.github.io/categories/ElasticSearch/"/>
-    
-    
-    <category term="ElasticSearch" scheme="https://alexhuihui.github.io/tags/ElasticSearch/"/>
     
   </entry>
   
